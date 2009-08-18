@@ -110,8 +110,9 @@ BuildRequires:	python
 %if %build_python_xpcom
 BuildRequires:	python-devel
 %endif
-BuildRequires:	nspr-devel
-BuildRequires:	nss-static-devel
+BuildRequires:	nspr-devel >= 2:4.7.5
+BuildRequires:	nss-static-devel >= 2:3.12.3.1
+
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 Requires:	%{libname} = %{version}-%{release}
@@ -132,8 +133,8 @@ Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
-Requires:	%{nssver}
-Requires:	%{nsprver}
+Requires:	%{nssver} >= 2:3.12.3.1
+Requires:	%{nsprver} >= 2:4.7.5
 %if %_use_syshunspell
 # (salem) fixes #42745
 Requires:	%{hunspellver}
