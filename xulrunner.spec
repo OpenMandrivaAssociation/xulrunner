@@ -352,6 +352,15 @@ EOF
 
 %find_lang %{name}
 
+mkdir -p %{buildroot}%{_sys_macros_dir}
+cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
+# Macros from %{name} package
+%%xulrunner_major            %{major}
+%%xulrunner_version          %{version}
+%%xulrunner_libname          %{libname}
+%%xulrunner_mozappdir        %{mozappdir}
+FIN
+
 %clean
 rm -rf %{buildroot}
 
@@ -410,6 +419,7 @@ rm -rf %{buildroot}
 %{mozappdir}/xpt_link
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
+%{_sys_macros_dir}/%{name}.macros
 
 %if %build_python_xpcom
 %files -n %{pythonname}
