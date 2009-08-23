@@ -99,7 +99,6 @@ BuildRequires:	libsqlite3-devel >= 3.6.7
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
 BuildRequires:	libgnomeui2-devel
-BuildRequires:	lcms-devel
 BuildRequires:	java-rpmbuild
 BuildRequires:	zip
 BuildRequires:	doxygen
@@ -182,8 +181,8 @@ a Python application.
 %patch8 -p1 -b .version
 %patch10 -p1 -b .pkgconfig
 %patch12 -p0 -b .strformat
-%patch14 -p1
-%patch15 -p1
+%patch14 -p1 -b .jemalloc
+%patch15 -p1 -b .gtk2
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
@@ -230,7 +229,6 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--disable-system-sqlite \
 %endif
 	--enable-system-cairo \
-	--enable-system-lcms \
 %if %_use_syshunspell
 	--enable-system-hunspell \
 %endif
@@ -244,7 +242,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-extensions \
 	--disable-installer \
 	--disable-updater \
-	--enable-optimize=-O2 \
+	--enable-optimize \
 	--enable-jemalloc \
 	--disable-wrap-malloc \
 	--with-valgrind \
@@ -268,7 +266,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--disable-mochitest \
 	--with-distribution-id=com.mandriva
 
-perl -p -i -e 's|\-0|\-9|g' config/make-jars.pl
+%__perl -p -i -e 's|\-0|\-9|g' config/make-jars.pl
 
 # (tpg) on x86_64 fails when parallel compiling is on
 # java.lang.OutOfMemoryError
@@ -323,9 +321,9 @@ cat << EOF > %{buildroot}%{mozappdir}/defaults/pref/vendor.js
 pref("general.useragent.vendor", "%{distribution}");
 pref("general.useragent.vendorSub", "%{version}-%{release}");
 pref("general.useragent.vendorComment", "%{mandriva_release}");
-pref("mousewheel.horizscroll.withnokey.action", 0);
-pref("mousewheel.horizscroll.withnokey.numlines", -1);
-pref("mousewheel.horizscroll.withnokey.sysnumlines", true);
+pref("mousewheel.horizscroll.withnokey.action", 1);
+pref("mousewheel.horizscroll.withnokey.numlines", 3);
+pref("mousewheel.horizscroll.withnokey.sysnumlines", false);
 pref("network.protocol-handler.app.mailto", "/usr/bin/xdg-email");
 pref("network.protocol-handler.app.mms", "/usr/bin/xdg-open");
 pref("browser.display.use_system_colors", true);
