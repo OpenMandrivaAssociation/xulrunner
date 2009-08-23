@@ -321,9 +321,12 @@ cat << EOF > %{buildroot}%{mozappdir}/defaults/pref/vendor.js
 pref("general.useragent.vendor", "%{distribution}");
 pref("general.useragent.vendorSub", "%{version}-%{release}");
 pref("general.useragent.vendorComment", "%{mandriva_release}");
-pref("mousewheel.horizscroll.withnokey.action", 1);
+pref("mousewheel.horizscroll.withnokey.action", 0);
 pref("mousewheel.horizscroll.withnokey.numlines", 3);
 pref("mousewheel.horizscroll.withnokey.sysnumlines", false);
+pref("mousewheel.withnokey.action", 0);
+pref("mousewheel.withnokey.numlines", 7);
+pref("mousewheel.withnokey.sysnumlines", false);
 pref("network.protocol-handler.app.mailto", "/usr/bin/xdg-email");
 pref("network.protocol-handler.app.mms", "/usr/bin/xdg-open");
 pref("browser.display.use_system_colors", true);
