@@ -83,6 +83,7 @@ Patch10:	xulrunner-1.9.1-pkgconfig.patch
 Patch12:	xulrunner-1.9.0.5-fix-string-format.patch
 Patch14:	xulrunner-1.9.1-jemalloc.patch
 Patch15:	xulrunner-1.9.1-gtk2.patch
+Patch16:	xulrunner-1.9.1-java-make-j1.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 BuildRequires:	libpng-devel
@@ -183,6 +184,7 @@ a Python application.
 %patch12 -p0 -b .strformat
 %patch14 -p1 -b .jemalloc
 %patch15 -p1 -b .gtk2
+%patch16 -p1 -b .java_make-j1
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
@@ -270,7 +272,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 
 # (tpg) on x86_64 fails when parallel compiling is on
 # java.lang.OutOfMemoryError
-%make -j1
+%make
 
 %install
 rm -rf %{buildroot}
