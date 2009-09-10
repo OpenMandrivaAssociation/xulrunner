@@ -16,13 +16,13 @@
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 3.5.2
-%define version_internal 1.9.1.2
+%define ffver 3.5.3
+%define version_internal 1.9.1.3
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 4
+%define release %mkrel 1
 
 %else
 # Old distros
@@ -69,7 +69,7 @@ Release:	%{release}
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}-source.tar.bz2
+Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
 Source1:	%{SOURCE0}.asc
 Patch1:		xulrunner-1.9.1-max-path-len.patch
 Patch5:		mozilla-nongnome-proxies.patch
