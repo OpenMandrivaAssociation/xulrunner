@@ -110,7 +110,7 @@ BuildRequires:	python
 %if %build_python_xpcom
 BuildRequires:	python-devel
 %endif
-BuildRequires:	nspr-devel >= 2:4.7.5
+BuildRequires:	nspr-devel >= 2:4.8
 BuildRequires:	nss-static-devel >= 2:3.12.3.1
 
 BuildRequires:	pango-devel
@@ -247,7 +247,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-optimize \
 	--enable-jemalloc \
 	--disable-wrap-malloc \
-	--with-valgrind \
+	--enable-valgrind \
 	--disable-strip \
 	--enable-startup-notification \
 	--enable-default-toolkit=cairo-gtk2 \
