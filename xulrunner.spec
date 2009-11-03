@@ -95,7 +95,7 @@ BuildRequires:	gtk+2-devel
 BuildRequires:	startup-notification-devel
 BuildRequires:	dbus-glib-devel
 %if %mdkversion >= 200900
-BuildRequires:	libsqlite3-devel >= 3.6.7
+BuildRequires:	libsqlite3-devel >= 3.6.16
 %endif
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
