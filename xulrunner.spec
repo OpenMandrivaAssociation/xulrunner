@@ -16,13 +16,13 @@
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 3.5.3
-%define version_internal 1.9.1.3
+%define ffver 3.5.5
+%define version_internal 1.9.1.5
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 2
+%define release %mkrel 1
 
 %else
 # Old distros
