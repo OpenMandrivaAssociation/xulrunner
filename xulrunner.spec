@@ -9,20 +9,20 @@
 
 # required for, at least, 2009.0
 %if %mdkversion < 200910
-# (tpg) nss libraries are not conventinaly named(mozilla stil sux),
+# (tpg) nss libraries are not conventinaly named(mozilla still sux),
 # thanks to this auto dependencies are wongly generated for devel libraries
 # blacklisting all nss libraries should solve this
 %define _requires_exceptions libnss3\\|libnssutil3\\|libsmime3\\|libssl3\\|libnspr4\\|libplc4\\|libplds4
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 3.5.6
-%define version_internal 1.9.1.6
+%define ffver 3.6
+%define version_internal 1.9.2
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel -c b4 1
 
 %else
 # Old distros
@@ -57,7 +57,7 @@
 
 # mdv2009.1 introduces python-xpcom bindings
 %if %mdkversion >= 200910
-%define build_python_xpcom 1
+%define build_python_xpcom 0
 %else
 %define build_python_xpcom 0
 %endif
@@ -69,7 +69,7 @@ Release:	%{release}
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
+Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}b4.source.tar.bz2
 Source1:	%{SOURCE0}.asc
 Patch1:		xulrunner-1.9.1-max-path-len.patch
 Patch5:		mozilla-nongnome-proxies.patch
@@ -84,6 +84,7 @@ Patch12:	xulrunner-1.9.0.5-fix-string-format.patch
 Patch14:	xulrunner-1.9.1-jemalloc.patch
 Patch15:	xulrunner-1.9.1-gtk2.patch
 Patch16:	xulrunner-1.9.1-java-make-j1.patch
+Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 BuildRequires:	libpng-devel
@@ -95,7 +96,7 @@ BuildRequires:	gtk+2-devel
 BuildRequires:	startup-notification-devel
 BuildRequires:	dbus-glib-devel
 %if %mdkversion >= 200900
-BuildRequires:	libsqlite3-devel >= 3.6.16
+BuildRequires:	libsqlite3-devel >= 3.6.7
 %endif
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
@@ -107,23 +108,23 @@ BuildRequires:	makedepend
 BuildRequires:	valgrind
 BuildRequires:	rootcerts
 BuildRequires:	python
-%if %build_python_xpcom
-BuildRequires:	python-devel
-%endif
+BuildRequires:	python-devel >= 2.6
 BuildRequires:	nspr-devel >= 2:4.8
 BuildRequires:	nss-static-devel >= 2:3.12.3.1
-
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
+BuildRequires:	libnotify-devel
+BuildRequires:	mesagl-devel
 Requires:	%{libname} = %{version}-%{release}
+Conflicts:	xulrunner < %{version}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 
 %description
-XULRunner is a Mozilla runtime package that can be used to 
-bootstrap XUL+XPCOM applications that are as rich as Firefox 
-and Thunderbird. It will provide mechanisms for installing, 
-upgrading, and uninstalling these applications. XULRunner will 
-also provide libxul, a solution which allows the embedding of 
+XULRunner is a Mozilla runtime package that can be used to
+bootstrap XUL+XPCOM applications that are as rich as Firefox
+and Thunderbird. It will provide mechanisms for installing,
+upgrading, and uninstalling these applications. XULRunner will
+also provide libxul, a solution which allows the embedding of
 Mozilla technologies in other projects and products.
 
 %package -n %{libname}
@@ -131,6 +132,7 @@ Summary:        Dynamic libraries for %{name}
 Group:          System/Libraries
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
+Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nssver} >= 2:3.12.3.1
@@ -140,7 +142,7 @@ Requires:	%{nsprver} >= 2:4.7.5
 Requires:	%{hunspellver}
 %endif
 # (salem) bug #42680 for noarch packages
-Provides:	libxulrunner = %{version}
+Provides:	libxulrunner = %{version}-%{release}
 
 %description -n %{libname}
 Dynamic libraries for %{name}.
@@ -148,8 +150,8 @@ Dynamic libraries for %{name}.
 %package -n %{develname}
 Summary:	Development files for %{name}
 Group:		Development/Other
-Requires:	%{libname} = %{version}-%{release}
-Obsoletes:	xulrunner-devel < 1.9.0.1-2
+Requires:	%{name} = %{version}-%{release}
+Obsoletes:	xulrunner-devel < 1.9.2
 Obsoletes:	%{mklibname mozilla-firefox -d} < 0:3
 Obsoletes:	%{mklibname %{name}-unstable -d}
 Provides:	%{name}-devel = %{version}-%{release}
@@ -175,16 +177,17 @@ a Python application.
 %endif
 
 %prep
-%setup -qn mozilla-1.9.1
+%setup -qn mozilla-1.9.2
 %patch1 -p1 -b .pathlen
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
-%patch10 -p1 -b .pkgconfig
+#%patch10 -p1 -b .pkgconfig
 %patch12 -p0 -b .strformat
 %patch14 -p1 -b .jemalloc
-%patch15 -p1 -b .gtk2
+#%patch15 -p1 -b .gtk2
 %patch16 -p1 -b .java_make-j1
+%patch17 -p1
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
@@ -234,14 +237,12 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %if %_use_syshunspell
 	--enable-system-hunspell \
 %endif
-	--disable-ctl \
 	--enable-javaxpcom \
 	--enable-pango \
 	--enable-svg \
 	--enable-canvas \
 	--enable-crypto \
 	--disable-crashreporter \
-	--enable-extensions \
 	--disable-installer \
 	--disable-updater \
 	--enable-optimize \
@@ -255,15 +256,20 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--with-java-bin-path=%{java_home}/bin \
 	--enable-image-encoder=all \
 	--enable-image-decoders=all \
-%if %build_python_xpcom
-	--enable-extensions="default,python/xpcom" \
-%else
-	--enable-extensions="default" \
-%endif
 	--enable-places \
 	--enable-storage \
 	--enable-safe-browsing \
 	--enable-url-classifier \
+	--enable-gnomevfs \
+	--enable-gnomeui \
+	--disable-faststart \
+	--enable-smil \
+	--disable-tree-freetype \
+	--disable-canvas3d \
+	--disable-coretext \
+	--enable-extensions=default \
+	--enable-necko-protocols=all \
+	--disable-necko-wifi \
 	--disable-tests \
 	--disable-mochitest \
 	--with-distribution-id=com.mandriva
@@ -272,6 +278,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 
 # (tpg) on x86_64 fails when parallel compiling is on
 # java.lang.OutOfMemoryError
+# since 3.6 it does not
 %make
 
 %install
@@ -313,9 +320,9 @@ touch %{buildroot}%{mozappdir}/components/xpti.dat
 
 %if %build_python_xpcom
 # Prepare python-xpcom package
-mkdir -p %{buildroot}%{python_sitelib}
-mv -f %{buildroot}%{mozappdir}/python/xpcom %{buildroot}%{python_sitelib}/
-rm -rf %{buildroot}%{mozappdir}/python
+#mkdir -p %{buildroot}%{python_sitelib}
+#mv -f %{buildroot}%{mozappdir}/python/xpcom %{buildroot}%{python_sitelib}/
+#rm -rf %{buildroot}%{mozappdir}/python
 %endif
 
 # set up our default preferences
@@ -323,6 +330,7 @@ cat << EOF > %{buildroot}%{mozappdir}/defaults/pref/vendor.js
 pref("general.useragent.vendor", "%{distribution}");
 pref("general.useragent.vendorSub", "%{version}-%{release}");
 pref("general.useragent.vendorComment", "%{mandriva_release}");
+pref("general.smoothScroll", true);
 pref("mousewheel.horizscroll.withnokey.action", 0);
 pref("mousewheel.horizscroll.withnokey.numlines", 3);
 pref("mousewheel.horizscroll.withnokey.sysnumlines", false);
@@ -331,24 +339,23 @@ pref("mousewheel.withnokey.numlines", 7);
 pref("mousewheel.withnokey.sysnumlines", false);
 pref("network.protocol-handler.app.mailto", "/usr/bin/xdg-email");
 pref("network.protocol-handler.app.mms", "/usr/bin/xdg-open");
+pref("network.http.pipelining", true);
+pref("network.http.proxy.pipelining", true);
+pref("network.http.pipelining.maxrequests", 8);
 pref("browser.display.use_system_colors", true);
-pref("general.smoothScroll", true);
+pref("browser.tabs.loadDivertedInBackground", true);
 pref("browser.startup.homepage_override.mstone", "ignore");
-pref("print.print_edge_top", 14); // 1/100 of an inch
-pref("print.print_edge_left", 16); // 1/100 of an inch
-pref("print.print_edge_right", 16); // 1/100 of an inch
-pref("print.print_edge_bottom", 14); // 1/100 of an inch
 pref("browser.backspace_action", 2);
 pref("browser.tabs.loadFolderAndReplace", false);
 pref("browser.EULA.override", true);
 pref("browser.safebrowsing.enabled", true);
+pref("print.print_edge_top", 14); // 1/100 of an inch
+pref("print.print_edge_left", 16); // 1/100 of an inch
+pref("print.print_edge_right", 16); // 1/100 of an inch
+pref("print.print_edge_bottom", 14); // 1/100 of an inch
 pref("app.update.enabled", false);
 pref("app.update.auto", false);
 pref("app.update.autoInstallEnabled", false);
-pref("network.http.pipelining", true);
-pref("network.http.proxy.pipelining", true);
-pref("network.http.pipelining.maxrequests", 8);
-pref("browser.tabs.loadDivertedInBackground", true);
 pref("intl.locale.matchOS", true);
 pref("toolkit.storage.synchronous", 0);
 EOF
@@ -369,12 +376,12 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{_bindir}/xulrunner
 %doc LICENSE README.txt
+%dir %{mozappdir}
+%{_bindir}/xulrunner
 
 %files -n %{libname}
 %defattr(-,root,root)
-%dir %{mozappdir}
 %{mozappdir}/chrome
 %{mozappdir}/dictionaries
 %dir %{mozappdir}/components
@@ -382,6 +389,7 @@ rm -rf %{buildroot}
 %ghost %{mozappdir}/components/xpti.dat
 %{mozappdir}/components/*.so
 %{mozappdir}/components/*.xpt
+%{mozappdir}/components/*.list
 %attr(644, root, root) %{mozappdir}/components/*.js
 %{mozappdir}/defaults
 %{mozappdir}/greprefs
@@ -406,11 +414,11 @@ rm -rf %{buildroot}
 %{mozappdir}/dependentlibs.list
 %{mozappdir}/javaxpcom.jar
 %dir %{_sysconfdir}/gre.d
-%{_sysconfdir}/gre.d/%{gre_conf_file}
+%{_sysconfdir}/gre.d/*.conf
 %if %build_python_xpcom
-%exclude %{mozappdir}/libpyxpcom.so
-%exclude %{mozappdir}/components/libpyloader.so
-%exclude %{mozappdir}/components/pyabout.py*
+#%exclude %{mozappdir}/libpyxpcom.so
+#%exclude %{mozappdir}/components/libpyloader.so
+#%exclude %{mozappdir}/components/pyabout.py*
 %endif
 
 %files -n %{develname}
@@ -422,12 +430,13 @@ rm -rf %{buildroot}
 %{mozappdir}/xpt_link
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
+%{_datadir}/idl/%{name}-%{version_internal}
 %{_sys_macros_dir}/%{name}.macros
 
 %if %build_python_xpcom
 %files -n %{pythonname}
-%{mozappdir}/libpyxpcom.so
-%{mozappdir}/components/libpyloader.so
-%{mozappdir}/components/pyabout.py*
-%{python_sitelib}/xpcom
+#%{mozappdir}/libpyxpcom.so
+#%{mozappdir}/components/libpyloader.so
+#%{mozappdir}/components/pyabout.py*
+#%{python_sitelib}/xpcom
 %endif
