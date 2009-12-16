@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c b4 2
+%define release %mkrel -c b4 3
 
 %else
 # Old distros
@@ -57,7 +57,7 @@
 
 # mdv2009.1 introduces python-xpcom bindings
 %if %mdkversion >= 200910
-%define build_python_xpcom 0
+%define build_python_xpcom 1
 %else
 %define build_python_xpcom 0
 %endif
