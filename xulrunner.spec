@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c b5 1
+%define release %mkrel -c b5 2
 
 %else
 # Old distros
@@ -244,8 +244,8 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-smil \
 	--disable-tree-freetype \
 	--disable-canvas3d \
-	--disable-coretext \
-	--enable-extensions=default \
+	--enable-coretext \
+	--enable-extensions=all \
 	--enable-necko-protocols=all \
 	--disable-necko-wifi \
 	--disable-tests \
