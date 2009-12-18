@@ -245,7 +245,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--disable-tree-freetype \
 	--disable-canvas3d \
 	--enable-coretext \
-	--enable-extensions=all \
+	--enable-extensions \
 	--enable-necko-protocols=all \
 	--disable-necko-wifi \
 	--disable-tests \
