@@ -77,7 +77,7 @@ Patch7:		%{name}-1.9.1-pluginsdir2.patch
 # Fedora patches:
 # use 1.9 as xulrunner version in the dirname and not the complete version string
 Patch8:		xulrunner-1.9.0.1-version.patch
-Patch10:	xulrunner-1.9.1-pkgconfig.patch
+Patch10:	xulrunner-1.9.2-pkgconfig.patch
 # (salem) this patch does not work properly on ff3
 #Patch11:	xulrunner-1.9.0.1-theme-selection.patch
 Patch12:	xulrunner-1.9.0.5-fix-string-format.patch
@@ -182,7 +182,7 @@ a Python application.
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
-#%patch10 -p1 -b .pkgconfig
+%patch10 -p1 -b .pkgconfig
 %patch12 -p0 -b .strformat
 %patch14 -p1 -b .jemalloc
 #%patch15 -p1 -b .gtk2
