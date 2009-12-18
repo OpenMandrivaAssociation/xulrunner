@@ -36,7 +36,6 @@
 %define libname %mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 %define develunstname %mklibname %{name}-unstable -d
-%define pythonname python-xpcom
 %define sname firefox
 
 # (tpg) various directory defines
@@ -53,13 +52,6 @@
 %define _use_syshunspell 1
 %else
 %define _use_syshunspell 0
-%endif
-
-# mdv2009.1 introduces python-xpcom bindings
-%if %mdkversion >= 200910
-%define build_python_xpcom 1
-%else
-%define build_python_xpcom 0
 %endif
 
 Summary:	XUL Runtime for Gecko Applications
@@ -161,20 +153,6 @@ Requires:	libalsa-devel
 
 %description -n %{develname}
 Development files and headers for %{name}.
-
-%if %build_python_xpcom
-%package -n %{pythonname}
-Summary:	XPCOM bindings for Python
-Group:		Development/Python
-Requires:	%{libname} = %{version}-%{release}
-
-%description -n %{pythonname}
-PyXPCOM allows for communication between Python and XPCOM, such that
-a Python application can access XPCOM objects, and XPCOM can access
-any Python class that implements an XPCOM interface.
-With PyXPCOM, a developer can talk to XPCOM or embed Gecko from
-a Python application.
-%endif
 
 %prep
 %setup -qn mozilla-1.9.2
@@ -318,13 +296,6 @@ mkdir -p %{buildroot}%{mozappdir}/components
 touch %{buildroot}%{mozappdir}/components/compreg.dat
 touch %{buildroot}%{mozappdir}/components/xpti.dat
 
-%if %build_python_xpcom
-# Prepare python-xpcom package
-#mkdir -p %{buildroot}%{python_sitelib}
-#mv -f %{buildroot}%{mozappdir}/python/xpcom %{buildroot}%{python_sitelib}/
-#rm -rf %{buildroot}%{mozappdir}/python
-%endif
-
 # set up our default preferences
 cat << EOF > %{buildroot}%{mozappdir}/defaults/pref/vendor.js
 pref("general.useragent.vendor", "%{distribution}");
@@ -415,11 +386,6 @@ rm -rf %{buildroot}
 %{mozappdir}/javaxpcom.jar
 %dir %{_sysconfdir}/gre.d
 %{_sysconfdir}/gre.d/*.conf
-%if %build_python_xpcom
-#%exclude %{mozappdir}/libpyxpcom.so
-#%exclude %{mozappdir}/components/libpyloader.so
-#%exclude %{mozappdir}/components/pyabout.py*
-%endif
 
 %files -n %{develname}
 %defattr(-,root,root)
@@ -432,11 +398,3 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
 %{_sys_macros_dir}/%{name}.macros
-
-%if %build_python_xpcom
-%files -n %{pythonname}
-#%{mozappdir}/libpyxpcom.so
-#%{mozappdir}/components/libpyloader.so
-#%{mozappdir}/components/pyabout.py*
-#%{python_sitelib}/xpcom
-%endif
