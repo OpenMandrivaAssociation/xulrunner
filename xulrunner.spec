@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c b5 2
+%define release %mkrel -c b5 3
 
 %else
 # Old distros
@@ -77,6 +77,9 @@ Patch14:	xulrunner-1.9.1-jemalloc.patch
 Patch15:	xulrunner-1.9.1-gtk2.patch
 Patch16:	xulrunner-1.9.1-java-make-j1.patch
 Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
+# (tpg) https://bugzilla.mozilla.org/show_bug.cgi?id=526152
+Patch18:	xulrunner-1.9.2-jemalloc-alignment-assertion.patch
+Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 BuildRequires:	libpng-devel
@@ -166,6 +169,8 @@ Development files and headers for %{name}.
 #%patch15 -p1 -b .gtk2
 %patch16 -p1 -b .java_make-j1
 %patch17 -p1
+%patch18 -p1
+%patch19 -p1
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
