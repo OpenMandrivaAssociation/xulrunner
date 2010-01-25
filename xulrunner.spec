@@ -22,12 +22,12 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 
 %else
 # Old distros
 %define subrel 1
-%define release %mkrel 1
+%define release %mkrel 0
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
@@ -82,6 +82,7 @@ Patch18:	xulrunner-1.9.2-jemalloc-alignment-assertion.patch
 Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
 Patch20:    xulrunner-1.9.2-helper-app.patch 
 Patch21:    xulrunner-1.9.2-kde-integration.patch
+Patch22:	mozilla-1.9.2-startup_notification_fix.diff
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 BuildRequires:	libpng-devel
@@ -175,6 +176,7 @@ Development files and headers for %{name}.
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p0
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
