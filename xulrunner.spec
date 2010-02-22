@@ -340,6 +340,7 @@ pref("app.update.auto", false);
 pref("app.update.autoInstallEnabled", false);
 pref("intl.locale.matchOS", true);
 pref("toolkit.storage.synchronous", 0);
+pref("layout.css.visited_links_enabled", false);
 EOF
 
 %find_lang %{name}
