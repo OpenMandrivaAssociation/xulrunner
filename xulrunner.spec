@@ -16,13 +16,13 @@
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 3.6
+%define ffver 3.6.2
 %define version_internal 1.9.2
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 2
+%define release %mkrel 1
 
 %else
 # Old distros
@@ -109,7 +109,7 @@ BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:	python-devel >= 2.6
 BuildRequires:	nspr-devel >= 2:4.8
-BuildRequires:	nss-static-devel >= 2:3.12.3.1
+BuildRequires:	nss-static-devel >= 2:3.12.6
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
