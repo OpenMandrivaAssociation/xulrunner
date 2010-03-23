@@ -109,7 +109,7 @@ BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:	python-devel >= 2.6
 BuildRequires:	nspr-devel >= 2:4.8
-BuildRequires:	nss-static-devel >= 2:3.12.4
+BuildRequires:	nss-static-devel >= 2:3.12.6
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
