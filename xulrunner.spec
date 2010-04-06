@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 
 %else
 # Old distros
@@ -80,13 +80,17 @@ Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
 # (tpg) https://bugzilla.mozilla.org/show_bug.cgi?id=526152
 Patch18:	xulrunner-1.9.2-jemalloc-alignment-assertion.patch
 Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
-Patch20:    xulrunner-1.9.2-helper-app.patch 
-Patch21:    xulrunner-1.9.2-kde-integration.patch
+Patch20:	xulrunner-1.9.2-helper-app.patch 
+Patch21:	xulrunner-1.9.2-kde-integration.patch
 Patch22:	mozilla-1.9.2-startup_notification_fix.diff
 Patch25:	xulrunner-1.9.2-realpath.patch
+Patch26:	mozilla-1.9.2-gtk2.diff
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
-BuildRequires:	libpng-devel
+#(tpg) older versions doesn't support apng extension
+%if %mdkversion >= 200900
+BuildRequires:	libpng-devel >= 1.2.25-2
+%endif
 %if %_use_syshunspell
 BuildRequires:	libhunspell-devel
 %endif
@@ -100,15 +104,20 @@ BuildRequires:	libsqlite3-devel >= 3.6.7
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
 BuildRequires:	libgnomeui2-devel
+%if %mdkversion >= 200900
 BuildRequires:	java-rpmbuild
+%endif
+%if %mdkversion < 200900
+BuildRequires:	java-1.5.0-devel
+%endif
 BuildRequires:	zip
 BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
 BuildRequires:	rootcerts
 BuildRequires:	python
-BuildRequires:	python-devel >= 2.6
-BuildRequires:	nspr-devel >= 2:4.8
+BuildRequires:	python-devel
+BuildRequires:	nspr-devel >= 2:4.8.4
 BuildRequires:	nss-static-devel >= 2:3.12.6
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
@@ -134,8 +143,8 @@ Conflicts:	xulrunner < %{version}
 Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
-Requires:	%{nssver} >= 2:3.12.3.1
-Requires:	%{nsprver} >= 2:4.7.5
+Requires:	%{nssver} >= 2:3.12.6
+Requires:	%{nsprver} >= 2:4.8.4
 %if %_use_syshunspell
 # (salem) fixes #42745
 Requires:	%{hunspellver}
@@ -180,6 +189,11 @@ Development files and headers for %{name}.
 %patch22 -p0
 %patch25 -p1
 
+%if %mdkversion < 200900
+# patch by fcrozat
+%patch26 -p0
+%endif
+
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
 perl ./certdata.perl < /etc/pki/tls/mozilla/certdata.txt
@@ -216,7 +230,11 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--with-system-jpeg \
 	--with-system-zlib \
 	--with-system-bz2 \
-	--with-system-png \
+%if %mdkversion >= 200900
+	--enable-system-png \
+%else
+	--disable-system-png \
+%endif
 	--with-system-nspr \
 	--with-system-nss \
 %if %mdkversion >= 200900
@@ -224,7 +242,11 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %else
 	--disable-system-sqlite \
 %endif
+%if %mdkversion >= 200900
 	--enable-system-cairo \
+%else
+	--disable-system-cairo \
+%endif
 %if %_use_syshunspell
 	--enable-system-hunspell \
 %endif
@@ -384,11 +406,6 @@ rm -rf %{buildroot}
 %{mozappdir}/plugins
 %{mozappdir}/res
 %{mozappdir}/*.so
-%if %mdkversion < 200900
-# older distros need a nspr and nss upgrade, use the internal libs for now
-%{mozappdir}/libfreebl3.chk
-%{mozappdir}/libsoftokn3.chk
-%endif
 %{mozappdir}/mozilla-xremote-client
 %{mozappdir}/run-mozilla.sh
 %{mozappdir}/regxpcom
