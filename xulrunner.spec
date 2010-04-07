@@ -98,7 +98,7 @@ BuildRequires:	libIDL2-devel
 BuildRequires:	gtk+2-devel
 BuildRequires:	startup-notification-devel
 BuildRequires:	dbus-glib-devel
-%if %mdkversion >= 200900
+%if %mdkversion >= 200800
 BuildRequires:	libsqlite3-devel >= 3.6.16.1
 %endif
 BuildRequires:	libgnome-vfs2-devel
@@ -237,7 +237,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %endif
 	--with-system-nspr \
 	--with-system-nss \
-%if %mdkversion >= 200900
+%if %mdkversion >= 200800
 	--enable-system-sqlite \
 %else
 	--disable-system-sqlite \
