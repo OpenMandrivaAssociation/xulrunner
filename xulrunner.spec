@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 4
+%define release %mkrel 5
 %else
 # Old distros
 %define subrel 1
@@ -371,7 +371,7 @@ pref("app.update.autoInstallEnabled", false);
 pref("intl.locale.matchOS", true);
 pref("toolkit.storage.synchronous", 0);
 pref("layout.css.visited_links_enabled", false);
-pref("security.ssl.require_safe_negotiation", true);
+pref("security.ssl.require_safe_negotiation", false);
 EOF
 
 %find_lang %{name}
