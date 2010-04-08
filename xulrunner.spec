@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 3
+%define release %mkrel 4
 %else
 # Old distros
 %define subrel 1
@@ -357,6 +357,10 @@ pref("browser.backspace_action", 2);
 pref("browser.tabs.loadFolderAndReplace", false);
 pref("browser.EULA.override", true);
 pref("browser.safebrowsing.enabled", true);
+pref("browser.shell.checkDefaultBrowser", false);
+pref("browser.startup.homepage", "file:///usr/share/doc/HTML/index.html");
+pref("browser.ctrlTab.previews", true);
+pref("browser.tabs.insertRelatedAfterCurrent", false);
 pref("print.print_edge_top", 14); // 1/100 of an inch
 pref("print.print_edge_left", 16); // 1/100 of an inch
 pref("print.print_edge_right", 16); // 1/100 of an inch
@@ -367,6 +371,7 @@ pref("app.update.autoInstallEnabled", false);
 pref("intl.locale.matchOS", true);
 pref("toolkit.storage.synchronous", 0);
 pref("layout.css.visited_links_enabled", false);
+pref("security.ssl.require_safe_negotiation", true);
 EOF
 
 %find_lang %{name}
