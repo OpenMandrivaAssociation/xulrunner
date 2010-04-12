@@ -153,6 +153,9 @@ Requires:	%{hunspellver}
 %endif
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
+%if %mdkversion >= 200800
+Requires:	%{mklibname sqlite 3} >= 3.6.16.1
+%endif
 
 %description -n %{libname}
 Dynamic libraries for %{name}.
