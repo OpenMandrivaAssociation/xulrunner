@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 5
+%define release %mkrel 6
 %else
 # Old distros
 %define subrel 1
