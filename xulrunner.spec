@@ -154,7 +154,7 @@ Requires:	%{hunspellver}
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
 %if %mdkversion >= 200800
-Requires:	%{mklibname sqlite 3} >= 3.6.16.1
+Requires:	%{mklibname sqlite3_ 0} >= 3.6.16.1
 %endif
 
 %description -n %{libname}
