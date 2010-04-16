@@ -22,10 +22,10 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 7
+%define release %mkrel 8
 %else
 # Old distros
-%define subrel 1
+%define subrel 2
 %define release %mkrel 0
 %endif
 
@@ -47,7 +47,7 @@
 %define nsprver %(rpm -q --whatprovides mozilla-nspr --queryformat %{NAME})
 
 # this seems fragile, so require the exact version or later (#58754)
-%define sqlite3ver %(rpm -q --whatprovides sqlite3-devel --queryformat %{version})
+%define sqlite3_version %(pkg-config --modversion sqlite3 &>/dev/null && pkg-config --modversion sqlite3 2>/dev/null || echo 0)
 
 # mdv2009.0 introduced a system wide libhunspell
 %if %mdkversion >= 200900
@@ -157,7 +157,7 @@ Requires:	%{hunspellver}
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
 %if %mdkversion >= 200800
-Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3ver}
+Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
 %endif
 
 %description -n %{libname}
