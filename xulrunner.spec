@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 8
+%define release %mkrel 9
 %else
 # Old distros
 %define subrel 2
@@ -43,8 +43,8 @@
 # (salem) ugly but avoids hardcoding package versions (#42745)
 # TODO: needs a better solution. (%__isa macro)?
 %define hunspellver %(rpm -q --whatprovides libhunspell --queryformat %{NAME})
-%define nssver %(rpm -q --whatprovides mozilla-nss --queryformat %{NAME})
-%define nsprver %(rpm -q --whatprovides mozilla-nspr --queryformat %{NAME})
+%define nss_libname %mklibname nss 3
+%define nspr_libname %mklibname nspr 4
 
 # this seems fragile, so require the exact version or later (#58754)
 %define sqlite3_version %(pkg-config --modversion sqlite3 &>/dev/null && pkg-config --modversion sqlite3 2>/dev/null || echo 0)
@@ -148,8 +148,8 @@ Conflicts:	xulrunner < %{version}
 Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
-Requires:	%{nssver} >= 2:3.12.6
-Requires:	%{nsprver} >= 2:4.8.4
+Requires:	%{nss_libname} >= 2:3.12.6
+Requires:	%{nspr_libname} >= 2:4.8.4
 %if %_use_syshunspell
 # (salem) fixes #42745
 Requires:	%{hunspellver}
