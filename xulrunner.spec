@@ -351,7 +351,6 @@ pref("mousewheel.horizscroll.withnokey.sysnumlines", false);
 pref("mousewheel.withnokey.action", 0);
 pref("mousewheel.withnokey.numlines", 7);
 pref("mousewheel.withnokey.sysnumlines", false);
-pref("mousewheel.acceleration.start", 3);
 pref("network.protocol-handler.app.mailto", "/usr/bin/xdg-email");
 pref("network.protocol-handler.app.mms", "/usr/bin/xdg-open");
 pref("network.http.pipelining", true);
