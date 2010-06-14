@@ -22,10 +22,10 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 9
+%define release %mkrel 10
 %else
 # Old distros
-%define subrel 2
+%define subrel 3
 %define release %mkrel 0
 %endif
 
@@ -48,6 +48,7 @@
 
 # this seems fragile, so require the exact version or later (#58754)
 %define sqlite3_version %(pkg-config --modversion sqlite3 &>/dev/null && pkg-config --modversion sqlite3 2>/dev/null || echo 0)
+%define nss_version %(pkg-config --modversion nss &>/dev/null && pkg-config --modversion nss 2>/dev/null || echo 0)
 
 # mdv2009.0 introduced a system wide libhunspell
 %if %mdkversion >= 200900
@@ -148,7 +149,7 @@ Conflicts:	xulrunner < %{version}
 Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
-Requires:	%{nss_libname} >= 2:3.12.6
+Requires:	%{nss_libname} >= 2:%{nss_version}
 Requires:	%{nspr_libname} >= 2:4.8.4
 %if %_use_syshunspell
 # (salem) fixes #42745
