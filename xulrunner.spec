@@ -16,16 +16,16 @@
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 3.6.3
-%define version_internal 1.9.2.3
+%define ffver 3.6.4
+%define version_internal 1.9.2.4
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 10
+%define release %mkrel 1
 %else
 # Old distros
-%define subrel 3
+%define subrel 1
 %define release %mkrel 0
 %endif
 
@@ -72,6 +72,7 @@ Patch7:		%{name}-1.9.1-pluginsdir2.patch
 # Fedora patches:
 # use 1.9 as xulrunner version in the dirname and not the complete version string
 Patch8:		xulrunner-1.9.0.1-version.patch
+Patch9:		xulrunner-ipc-stl.patch
 Patch10:	xulrunner-1.9.2-pkgconfig.patch
 # (salem) this patch does not work properly on ff3
 #Patch11:	xulrunner-1.9.0.1-theme-selection.patch
@@ -85,7 +86,7 @@ Patch18:	xulrunner-1.9.2-jemalloc-alignment-assertion.patch
 Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
 Patch20:	xulrunner-1.9.2-helper-app.patch 
 Patch21:	xulrunner-1.9.2-kde-integration.patch
-Patch22:	mozilla-1.9.2-startup_notification_fix.diff
+Patch22:	mozilla-1.9.2-nspr4_fix.diff
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
 BuildRequires:	zlib-devel
@@ -102,7 +103,7 @@ BuildRequires:	gtk+2-devel
 BuildRequires:	startup-notification-devel
 BuildRequires:	dbus-glib-devel
 %if %mdkversion >= 200800
-BuildRequires:	libsqlite3-devel >= 3.6.16.1
+BuildRequires:	libsqlite3-devel >= 3.6.22
 %endif
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
@@ -185,6 +186,12 @@ Development files and headers for %{name}.
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
+
+%if %mdkversion < 200900
+# patch by redhat
+%patch9 -p1 -b .ipc-stl
+%endif
+
 %patch10 -p1 -b .pkgconfig
 %patch12 -p0 -b .strformat
 %patch14 -p1 -b .jemalloc
@@ -429,6 +436,7 @@ rm -rf %{buildroot}
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
 %{mozappdir}/javaxpcom.jar
+%{mozappdir}/plugin-container
 %dir %{_sysconfdir}/gre.d
 %{_sysconfdir}/gre.d/*.conf
 
