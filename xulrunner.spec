@@ -81,12 +81,9 @@ Patch14:	xulrunner-1.9.1-jemalloc.patch
 Patch15:	xulrunner-1.9.1-gtk2.patch
 Patch16:	xulrunner-1.9.1-java-make-j1.patch
 Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
-# (tpg) https://bugzilla.mozilla.org/show_bug.cgi?id=526152
-Patch18:	xulrunner-1.9.2-jemalloc-alignment-assertion.patch
 Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
 Patch20:	xulrunner-1.9.2-helper-app.patch 
 Patch21:	xulrunner-1.9.2-kde-integration.patch
-Patch22:	mozilla-1.9.2-nspr4_fix.diff
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
 BuildRequires:	zlib-devel
@@ -198,11 +195,9 @@ Development files and headers for %{name}.
 #%patch15 -p1 -b .gtk2
 %patch16 -p1 -b .java_make-j1
 %patch17 -p1
-%patch18 -p1
 %patch19 -p1
 %patch20 -p1
-%patch21 -p1
-%patch22 -p0
+%patch21 -p1 -b .kde-integration
 %patch25 -p1
 
 %if %mdkversion < 200900
