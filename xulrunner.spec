@@ -16,13 +16,15 @@
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 3.6.8
-%define version_internal 1.9.2.8
+%define ffver 4.0
+%define version_internal 2.0
+
+%define prel b3
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel -c %prel 1
 %else
 # Old distros
 %define subrel 1
@@ -64,7 +66,7 @@ Release:	%{release}
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
+Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}%prel.source.tar.bz2
 Source1:	%{SOURCE0}.asc
 Patch1:		xulrunner-1.9.1-max-path-len.patch
 Patch5:		mozilla-nongnome-proxies.patch
@@ -100,7 +102,8 @@ BuildRequires:	gtk+2-devel
 BuildRequires:	startup-notification-devel
 BuildRequires:	dbus-glib-devel
 %if %mdkversion >= 200800
-BuildRequires:	libsqlite3-devel >= 3.6.22
+# (tpg) older releases does not have SQLITE_ENABLE_UNLOCK_NOTIFY enabled
+BuildRequires:	libsqlite3-devel >= 3.7.0.1-2
 %endif
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
@@ -118,8 +121,8 @@ BuildRequires:	valgrind
 BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:	python-devel
-BuildRequires:	nspr-devel >= 2:4.8.4
-BuildRequires:	nss-static-devel >= 2:3.12.6
+BuildRequires:	nspr-devel >= 2:4.8.6
+BuildRequires:	nss-static-devel >= 2:3.12.7
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
@@ -178,8 +181,8 @@ Requires:	libalsa-devel
 Development files and headers for %{name}.
 
 %prep
-%setup -qn mozilla-1.9.2
-%patch1 -p1 -b .pathlen
+%setup -qn mozilla-central
+#%patch1 -p1 -b .pathlen rediff
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
@@ -189,15 +192,15 @@ Development files and headers for %{name}.
 %patch9 -p1 -b .ipc-stl
 %endif
 
-%patch10 -p1 -b .pkgconfig
-%patch12 -p0 -b .strformat
-%patch14 -p1 -b .jemalloc
+#%patch10 -p1 -b .pkgconfig rediff
+#%patch12 -p0 -b .strformat rediff
+#%patch14 -p1 -b .jemalloc rediff
 #%patch15 -p1 -b .gtk2
 %patch16 -p1 -b .java_make-j1
 %patch17 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1 -b .kde-integration
+#%patch19 -p1 rediff
+#%patch20 -p1 rediff
+#%patch21 -p1 -b .kde-integration rediff?
 %patch25 -p1
 
 %if %mdkversion < 200900
@@ -247,7 +250,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--disable-system-png \
 %endif
 	--with-system-nspr \
-	--with-system-nss \
+	--without-system-nss \
 %if %mdkversion >= 200800
 	--enable-system-sqlite \
 %else
@@ -261,7 +264,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %if %_use_syshunspell
 	--enable-system-hunspell \
 %endif
-	--enable-javaxpcom \
+	--disable-javaxpcom \
 	--enable-pango \
 	--enable-svg \
 	--enable-canvas \
@@ -269,11 +272,12 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--disable-crashreporter \
 	--disable-installer \
 	--disable-updater \
-	--enable-optimize \
+	--enable-optimize="-O2" \
 	--enable-jemalloc \
 	--disable-wrap-malloc \
 	--enable-valgrind \
 	--disable-strip \
+	--enable-install-strip \
 	--enable-startup-notification \
 	--enable-default-toolkit=cairo-gtk2 \
 	--with-java-include-path=%{java_home}/include \
@@ -282,20 +286,27 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-image-decoders=all \
 	--enable-places \
 	--enable-storage \
-	--enable-safe-browsing \
+	--disable-safe-browsing \
 	--enable-url-classifier \
 	--enable-gnomevfs \
 	--enable-gnomeui \
 	--disable-faststart \
 	--enable-smil \
 	--disable-tree-freetype \
-	--disable-canvas3d \
-	--enable-coretext \
+	--enable-canvas3d \
+	--disable-coretext \
 	--enable-extensions=default \
 	--enable-necko-protocols=all \
 	--disable-necko-wifi \
 	--disable-tests \
 	--disable-mochitest \
+	--enable-xtf \
+	--enable-wave \
+	--enable-webm \
+	--enable-ogg \
+	--enable-xpcom-fastload \
+	--enable-gio \
+	--enable-dbus \
 	--with-distribution-id=com.mandriva
 
 %__perl -p -i -e 's|\-0|\-9|g' config/make-jars.pl
@@ -310,7 +321,7 @@ rm -rf %{buildroot}
 
 %makeinstall_std
 
-install -p dist/sdk/bin/regxpcom %{buildroot}%{mozappdir}
+#install -p dist/sdk/bin/regxpcom %{buildroot}%{mozappdir}
 
 rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
 pushd %{buildroot}%{mozappdir}
@@ -412,10 +423,10 @@ rm -rf %{buildroot}
 %ghost %{mozappdir}/components/xpti.dat
 %{mozappdir}/components/*.so
 %{mozappdir}/components/*.xpt
-%{mozappdir}/components/*.list
+%{mozappdir}/components/*.manifest
 %attr(644, root, root) %{mozappdir}/components/*.js
 %{mozappdir}/defaults
-%{mozappdir}/greprefs
+#%{mozappdir}/greprefs
 %dir %{mozappdir}/icons
 %attr(644, root, root) %{mozappdir}/icons/*
 %{mozappdir}/modules
@@ -424,13 +435,15 @@ rm -rf %{buildroot}
 %{mozappdir}/*.so
 %{mozappdir}/mozilla-xremote-client
 %{mozappdir}/run-mozilla.sh
-%{mozappdir}/regxpcom
+#%{mozappdir}/regxpcom
+%{mozappdir}greprefs.js
+%{mozappdir}/*.chk
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-bin
 %{mozappdir}/xulrunner-stub
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
-%{mozappdir}/javaxpcom.jar
+#%{mozappdir}/javaxpcom.jar
 %{mozappdir}/plugin-container
 %dir %{_sysconfdir}/gre.d
 %{_sysconfdir}/gre.d/*.conf
