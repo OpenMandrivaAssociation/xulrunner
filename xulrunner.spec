@@ -130,6 +130,7 @@ BuildRequires:	mesagl-devel
 %if %mdkversion >= 201000
 BuildRequires:	cairo-devel >= 1.8.8
 %endif
+BuildRequires:	yasm
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
@@ -436,7 +437,7 @@ rm -rf %{buildroot}
 %{mozappdir}/mozilla-xremote-client
 %{mozappdir}/run-mozilla.sh
 #%{mozappdir}/regxpcom
-%{mozappdir}greprefs.js
+%{mozappdir}/greprefs.js
 %{mozappdir}/*.chk
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-bin
