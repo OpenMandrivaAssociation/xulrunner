@@ -24,7 +24,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 1
+%define release %mkrel -c %prel 2
 %else
 # Old distros
 %define subrel 1
@@ -273,7 +273,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--disable-crashreporter \
 	--disable-installer \
 	--disable-updater \
-	--enable-optimize="-O2" \
+	--enable-optimize \
 	--enable-jemalloc \
 	--disable-wrap-malloc \
 	--enable-valgrind \
@@ -287,7 +287,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-image-decoders=all \
 	--enable-places \
 	--enable-storage \
-	--disable-safe-browsing \
+	--enable-safe-browsing \
 	--enable-url-classifier \
 	--enable-gnomevfs \
 	--enable-gnomeui \
