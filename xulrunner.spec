@@ -88,6 +88,7 @@ Patch20:	xulrunner-1.9.2-helper-app.patch
 Patch21:	xulrunner-1.9.2-kde-integration.patch
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
+Patch27:	 xulrunner-2.0b4-missing-linking-libraries.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 #(tpg) older versions doesn't support apng extension
@@ -210,6 +211,8 @@ Development files and headers for %{name}.
 %patch26 -p0
 %endif
 
+%patch27 -p0
+
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
 perl ./certdata.perl < /etc/pki/tls/mozilla/certdata.txt
@@ -266,7 +269,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %if %_use_syshunspell
 	--enable-system-hunspell \
 %endif
-	--enable-javaxpcom \
+	--disable-javaxpcom \
 	--enable-pango \
 	--enable-svg \
 	--enable-canvas \
