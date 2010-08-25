@@ -131,6 +131,7 @@ BuildRequires:	mesagl-devel
 BuildRequires:	cairo-devel >= 1.8.8
 %endif
 BuildRequires:	yasm
+BuildRequires:	libproxy-devel
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
@@ -265,7 +266,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %if %_use_syshunspell
 	--enable-system-hunspell \
 %endif
-	--disable-javaxpcom \
+	--enable-javaxpcom \
 	--enable-pango \
 	--enable-svg \
 	--enable-canvas \
@@ -308,6 +309,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-xpcom-fastload \
 	--enable-gio \
 	--enable-dbus \
+	--enable-libproxy \
 	--with-distribution-id=com.mandriva
 
 %__perl -p -i -e 's|\-0|\-9|g' config/make-jars.pl
@@ -425,6 +427,7 @@ rm -rf %{buildroot}
 %{mozappdir}/components/*.so
 %{mozappdir}/components/*.xpt
 %{mozappdir}/components/*.manifest
+%{mozappdir}/*.manifest
 %attr(644, root, root) %{mozappdir}/components/*.js
 %{mozappdir}/defaults
 #%{mozappdir}/greprefs
