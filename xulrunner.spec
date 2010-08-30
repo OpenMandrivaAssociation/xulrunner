@@ -24,7 +24,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 1
+%define release %mkrel -c %prel 2
 %else
 # Old distros
 %define subrel 1
@@ -237,7 +237,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 # (tpg) don't use macro here
 # (fhimpe) Starting from Firefox 3.0.1, at least sqlite 3.5.9 is needed
 # so don't use system sqlite on Mandriva older than 2009.0
-./configure \
+./configure --build=%{_target_platform} \
 	--prefix=%{_prefix} \
 	--bindir=%{_bindir} \
 	--libdir=%{_libdir} \
@@ -285,6 +285,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-install-strip \
 	--enable-startup-notification \
 	--enable-default-toolkit=cairo-gtk2 \
+	--enable-shared-js \
 	--with-java-include-path=%{java_home}/include \
 	--with-java-bin-path=%{java_home}/bin \
 	--enable-image-encoder=all \
