@@ -423,6 +423,7 @@ rm -rf %{buildroot}
 
 %files -n %{libname}
 %defattr(-,root,root)
+%dir %{mozappdir}
 %{mozappdir}/chrome
 %{mozappdir}/dictionaries
 %dir %{mozappdir}/components
