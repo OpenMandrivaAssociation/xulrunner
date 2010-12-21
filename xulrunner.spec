@@ -238,6 +238,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 # (fhimpe) Starting from Firefox 3.0.1, at least sqlite 3.5.9 is needed
 # so don't use system sqlite on Mandriva older than 2009.0
 ./configure --build=%{_target_platform} \
+	--host=%_host --target=%_target_platform \
 	--prefix=%{_prefix} \
 	--bindir=%{_bindir} \
 	--libdir=%{_libdir} \
