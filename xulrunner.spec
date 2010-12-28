@@ -255,7 +255,6 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %else
 	--disable-system-png \
 %endif
-	--with-system-nspr \
 	--without-system-nss \
 %if %mdkversion >= 200800
 	--enable-system-sqlite \
