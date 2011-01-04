@@ -350,7 +350,7 @@ rm  %{buildroot}%{mozappdir}/LICENSE
 rm  %{buildroot}%{mozappdir}/README.txt
 
 # when not building with system nspr:
-rm -f %{buildroot}%{mozappdir}%_libdir/xulrunner-2.0/nspr-config
+rm -f %{buildroot}%_libdir/xulrunner-2.0/nspr-config
 
 %if %_use_syshunspell
 # Use the system hunspell dictionaries
