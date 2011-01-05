@@ -24,7 +24,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 1
+%define release %mkrel -c %prel 2
 %else
 # Old distros
 %define subrel 1
@@ -350,7 +350,7 @@ rm  %{buildroot}%{mozappdir}/LICENSE
 rm  %{buildroot}%{mozappdir}/README.txt
 
 # when not building with system nspr:
-rm -f %{buildroot}%_libdir/xulrunner-2.0/nspr-config
+#rm -f %{buildroot}%_libdir/xulrunner-2.0/nspr-config
 
 %if %_use_syshunspell
 # Use the system hunspell dictionaries
@@ -468,6 +468,7 @@ rm -rf %{buildroot}
 %{mozappdir}/xpt_dump
 %{mozappdir}/xpt_link
 %{_libdir}/%{name}-devel-%{version_internal}
+%{_libdir}/%{name}-%{version_internal}/nspr-config
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
 %{_sys_macros_dir}/%{name}.macros
