@@ -24,7 +24,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 2
+%define release %mkrel -c %prel 3
 %else
 # Old distros
 %define subrel 1
@@ -122,7 +122,7 @@ BuildRequires:	valgrind
 BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:	python-devel
-BuildRequires:	nspr-devel >= 2:4.8.6
+BuildRequires:	nspr-devel >= 2:4.8.7
 BuildRequires:	nss-static-devel >= 2:3.12.7
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
@@ -154,7 +154,7 @@ Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
-Requires:	%{nspr_libname} >= 2:4.8.4
+Requires:	%{nspr_libname} >= 2:4.8.7
 %if %_use_syshunspell
 # (salem) fixes #42745
 Requires:	%{hunspellver}
@@ -255,6 +255,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %else
 	--disable-system-png \
 %endif
+	--with-system-nspr \
 	--without-system-nss \
 %if %mdkversion >= 200800
 	--enable-system-sqlite \
@@ -468,7 +469,6 @@ rm -rf %{buildroot}
 %{mozappdir}/xpt_dump
 %{mozappdir}/xpt_link
 %{_libdir}/%{name}-devel-%{version_internal}
-%{_libdir}/%{name}-%{version_internal}/nspr-config
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
 %{_sys_macros_dir}/%{name}.macros
