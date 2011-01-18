@@ -19,12 +19,12 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel b8
+%define prel b9
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 3
+%define release %mkrel -c %prel 1
 %else
 # Old distros
 %define subrel 1
@@ -59,6 +59,12 @@
 %define _use_syshunspell 0
 %endif
 
+%if %mdkversion >= 201100
+%define _use_sysvpx 1
+%else
+%define _use_sysvpx 0
+%endif
+
 Summary:	XUL Runtime for Gecko Applications
 Name:		xulrunner
 Version:	%{version_internal}
@@ -89,6 +95,9 @@ Patch21:	xulrunner-1.9.2-kde-integration.patch
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
 Patch27:	 xulrunner-2.0b4-missing-linking-libraries.patch
+# Patch from fedora: fix build
+Patch28:	xulrunner-2.0-system-cairo.patch
+Patch29:	xulrunner-2.0-system-cairo-tee.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 #(tpg) older versions doesn't support apng extension
@@ -97,6 +106,9 @@ BuildRequires:	libpng-devel >= 1.2.25-2
 %endif
 %if %_use_syshunspell
 BuildRequires:	libhunspell-devel
+%endif
+%if %_use_sysvpx
+BuildRequires:	libvpx-devel
 %endif
 BuildRequires:	libIDL2-devel
 BuildRequires:	gtk+2-devel
@@ -212,6 +224,8 @@ Development files and headers for %{name}.
 %endif
 
 %patch27 -p0
+%patch28 -p1
+%patch29 -p1
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
@@ -269,6 +283,9 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %endif
 %if %_use_syshunspell
 	--enable-system-hunspell \
+%endif
+%if %_use_sysvpx
+	--with-system-libvpx \
 %endif
 	--disable-javaxpcom \
 	--enable-pango \
