@@ -19,7 +19,7 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel b9
+%define prel b10
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
@@ -42,9 +42,6 @@
 # (tpg) various directory defines
 %define mozappdir %{_libdir}/%{name}-%{version_internal}
 
-# (salem) ugly but avoids hardcoding package versions (#42745)
-# TODO: needs a better solution. (%__isa macro)?
-%define hunspellver %(rpm -q --whatprovides libhunspell --queryformat %{NAME})
 %define nss_libname %mklibname nss 3
 %define nspr_libname %mklibname nspr 4
 
@@ -98,6 +95,7 @@ Patch27:	 xulrunner-2.0b4-missing-linking-libraries.patch
 # Patch from fedora: fix build
 Patch28:	xulrunner-2.0-system-cairo.patch
 Patch29:	xulrunner-2.0-system-cairo-tee.patch
+Patch30:	xulrunner-2.0-os2cc.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 #(tpg) older versions doesn't support apng extension
@@ -112,11 +110,13 @@ BuildRequires:	libvpx-devel
 %endif
 BuildRequires:	libIDL2-devel
 BuildRequires:	gtk+2-devel
+BuildRequires:	libxt-devel
 BuildRequires:	startup-notification-devel
 BuildRequires:	dbus-glib-devel
-%if %mdkversion >= 200800
+BuildRequires:	libevent-devel
+%if %mdkversion >= 201100
 # (tpg) older releases does not have SQLITE_ENABLE_UNLOCK_NOTIFY enabled
-BuildRequires:	libsqlite3-devel >= 3.7.0.1-2
+BuildRequires:	libsqlite3-devel >= 3.7.4
 %endif
 BuildRequires:	libgnome-vfs2-devel
 BuildRequires:	libgnome2-devel
@@ -127,15 +127,15 @@ BuildRequires:	java-rpmbuild
 %if %mdkversion < 200900
 BuildRequires:	java-1.5.0-devel
 %endif
+BuildRequires:	autoconf2.1
 BuildRequires:	zip
 BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
 BuildRequires:	rootcerts
 BuildRequires:	python
-BuildRequires:	python-devel
 BuildRequires:	nspr-devel >= 2:4.8.7
-BuildRequires:	nss-static-devel >= 2:3.12.7
+BuildRequires:	nss-devel >= 2:3.12.9
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
@@ -167,13 +167,9 @@ Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
 Requires:	%{nspr_libname} >= 2:4.8.7
-%if %_use_syshunspell
-# (salem) fixes #42745
-Requires:	%{hunspellver}
-%endif
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
-%if %mdkversion >= 200800
+%if %mdkversion >= 201100
 Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
 %endif
 
@@ -226,6 +222,9 @@ Development files and headers for %{name}.
 %patch27 -p0
 %patch28 -p1
 %patch29 -p1
+%patch30 -p1
+
+autoconf-2.13
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
@@ -249,7 +248,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %endif
 
 # (tpg) don't use macro here
-# (fhimpe) Starting from Firefox 3.0.1, at least sqlite 3.5.9 is needed
+# (fhimpe) Starting from Firefox 4.0b10, at least sqlite 3.6.4 is needed
 # so don't use system sqlite on Mandriva older than 2009.0
 ./configure --build=%{_target_platform} \
 	--host=%_host --target=%_target_platform \
@@ -264,14 +263,15 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--with-system-jpeg \
 	--with-system-zlib \
 	--with-system-bz2 \
+	--with-system-libevent \
 %if %mdkversion >= 200900
 	--enable-system-png \
 %else
 	--disable-system-png \
 %endif
 	--with-system-nspr \
-	--without-system-nss \
-%if %mdkversion >= 200800
+	--with-system-nss \
+%if %mdkversion >= 201100
 	--enable-system-sqlite \
 %else
 	--disable-system-sqlite \
@@ -332,6 +332,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-gio \
 	--enable-dbus \
 	--enable-libproxy \
+	--enable-chrome-format=jar \
 	--with-distribution-id=com.mandriva
 
 %__perl -p -i -e 's|\-0|\-9|g' config/make-jars.pl
@@ -467,7 +468,7 @@ rm -rf %{buildroot}
 %{mozappdir}/run-mozilla.sh
 #%{mozappdir}/regxpcom
 %{mozappdir}/greprefs.js
-%{mozappdir}/*.chk
+#%{mozappdir}/*.chk
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-bin
 %{mozappdir}/xulrunner-stub
