@@ -98,9 +98,8 @@ Patch29:	xulrunner-2.0-system-cairo-tee.patch
 Patch30:	xulrunner-2.0-os2cc.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
-#(tpg) older versions doesn't support apng extension
-%if %mdkversion >= 200900
-BuildRequires:	libpng-devel >= 1.2.25-2
+%if %mdkversion > 201100
+BuildRequires:	libpng-devel >= 1.4.1
 %endif
 %if %_use_syshunspell
 BuildRequires:	libhunspell-devel
@@ -264,10 +263,10 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--with-system-zlib \
 	--with-system-bz2 \
 	--with-system-libevent \
-%if %mdkversion >= 200900
-	--enable-system-png \
+%if %mdkversion > 201100
+	--with-system-png \
 %else
-	--disable-system-png \
+	--without-system-png \
 %endif
 	--with-system-nspr \
 	--with-system-nss \
