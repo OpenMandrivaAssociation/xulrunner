@@ -139,8 +139,8 @@ BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
 BuildRequires:	mesagl-devel
-%if %mdkversion >= 201000
-BuildRequires:	cairo-devel >= 1.8.8
+%if %mdkversion >= 201100
+BuildRequires:	cairo-devel >= 1.10
 %endif
 BuildRequires:	yasm
 BuildRequires:	libproxy-devel
@@ -275,7 +275,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 %else
 	--disable-system-sqlite \
 %endif
-%if %mdkversion >= 201000
+%if %mdkversion >= 201100
 	--enable-system-cairo \
 %else
 	--disable-system-cairo \
