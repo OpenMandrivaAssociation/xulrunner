@@ -258,6 +258,7 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--datadir=%{_datadir} \
 	--sysconfdir=%{_sysconfdir} \
 	--enable-application=xulrunner \
+	--disable-elf-hack \
 	--with-pthreads \
 	--with-system-jpeg \
 	--with-system-zlib \
