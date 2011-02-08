@@ -19,7 +19,7 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel b10
+%define prel b11
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
