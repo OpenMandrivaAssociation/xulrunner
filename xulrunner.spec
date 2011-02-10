@@ -72,6 +72,7 @@ Url:		http://developer.mozilla.org/en/docs/XULRunner
 Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}%prel.source.tar.bz2
 Source1:	%{SOURCE0}.asc
 Patch1:		xulrunner-1.9.1-max-path-len.patch
+Patch2:		xulrunner-2.0b11-elfhack.patch
 Patch5:		mozilla-nongnome-proxies.patch
 Patch7:		%{name}-1.9.1-pluginsdir2.patch
 # Fedora patches:
@@ -193,6 +194,7 @@ Development files and headers for %{name}.
 %prep
 %setup -qn mozilla-central
 #%patch1 -p1 -b .pathlen rediff
+%patch2 -p1 -b .elfhack
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
@@ -258,7 +260,6 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--datadir=%{_datadir} \
 	--sysconfdir=%{_sysconfdir} \
 	--enable-application=xulrunner \
-	--disable-elf-hack \
 	--with-pthreads \
 	--with-system-jpeg \
 	--with-system-zlib \
