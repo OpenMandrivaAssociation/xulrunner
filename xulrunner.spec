@@ -19,12 +19,12 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel b11
+%define prel b12
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 2
+%define release %mkrel -c %prel 1
 %else
 # Old distros
 %define subrel 1
@@ -72,7 +72,6 @@ Url:		http://developer.mozilla.org/en/docs/XULRunner
 Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}%prel.source.tar.bz2
 Source1:	%{SOURCE0}.asc
 Patch1:		xulrunner-1.9.1-max-path-len.patch
-Patch2:		xulrunner-2.0b11-elfhack.patch
 Patch5:		mozilla-nongnome-proxies.patch
 Patch7:		%{name}-1.9.1-pluginsdir2.patch
 # Fedora patches:
@@ -93,10 +92,6 @@ Patch21:	xulrunner-1.9.2-kde-integration.patch
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
 Patch27:	 xulrunner-2.0b4-missing-linking-libraries.patch
-# Patch from fedora: fix build
-Patch28:	xulrunner-2.0-system-cairo.patch
-Patch29:	xulrunner-2.0-system-cairo-tee.patch
-Patch30:	xulrunner-2.0-os2cc.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 %if %mdkversion > 201100
@@ -127,7 +122,6 @@ BuildRequires:	java-rpmbuild
 %if %mdkversion < 200900
 BuildRequires:	java-1.5.0-devel
 %endif
-BuildRequires:	autoconf2.1
 BuildRequires:	zip
 BuildRequires:	doxygen
 BuildRequires:	makedepend
@@ -194,7 +188,6 @@ Development files and headers for %{name}.
 %prep
 %setup -qn mozilla-central
 #%patch1 -p1 -b .pathlen rediff
-%patch2 -p1 -b .elfhack
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
@@ -221,11 +214,6 @@ Development files and headers for %{name}.
 %endif
 
 %patch27 -p0
-%patch28 -p1
-%patch29 -p1
-%patch30 -p1
-
-autoconf-2.13
 
 # needed to regenerate certdata.c
 pushd security/nss/lib/ckfw/builtins
