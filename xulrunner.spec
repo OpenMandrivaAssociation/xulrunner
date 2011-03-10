@@ -19,7 +19,7 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel b12
+%define prel rc1
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
@@ -186,7 +186,7 @@ Requires:	libalsa-devel
 Development files and headers for %{name}.
 
 %prep
-%setup -qn mozilla-central
+%setup -qn mozilla-2.0
 #%patch1 -p1 -b .pathlen rediff
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
