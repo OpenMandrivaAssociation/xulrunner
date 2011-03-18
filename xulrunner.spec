@@ -24,7 +24,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 1
+%define release %mkrel -c %prel 2
 %else
 # Old distros
 %define subrel 1
@@ -88,10 +88,10 @@ Patch16:	xulrunner-1.9.1-java-make-j1.patch
 Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
 Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
 Patch20:	xulrunner-1.9.2-helper-app.patch 
-Patch21:	xulrunner-1.9.2-kde-integration.patch
+Patch21:	mozilla-kde.patch
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
-Patch27:	 xulrunner-2.0b4-missing-linking-libraries.patch
+Patch27:	xulrunner-2.0b4-missing-linking-libraries.patch
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 %if %mdkversion > 201100
@@ -205,7 +205,7 @@ Development files and headers for %{name}.
 %patch17 -p1
 #%patch19 -p1 rediff
 #%patch20 -p1 rediff
-#%patch21 -p1 -b .kde-integration rediff?
+%patch21 -p1 -b .kde-integration
 %patch25 -p1
 
 %if %mdkversion < 200900
