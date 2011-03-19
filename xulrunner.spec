@@ -19,12 +19,12 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel rc1
+%define prel rc2
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 2
+%define release %mkrel -c %prel 1
 %else
 # Old distros
 %define subrel 1
