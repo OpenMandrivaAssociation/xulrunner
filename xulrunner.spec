@@ -301,7 +301,12 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-storage \
 	--enable-safe-browsing \
 	--enable-url-classifier \
+%if %mdkversion >= 201100
+	--enable-gio \
+	--disable-gnomevfs \
+%else
 	--enable-gnomevfs \
+%endif
 	--enable-gnomeui \
 	--disable-faststart \
 	--enable-smil \
@@ -318,7 +323,6 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-webm \
 	--enable-ogg \
 	--enable-xpcom-fastload \
-	--enable-gio \
 	--enable-dbus \
 	--enable-libproxy \
 	--enable-chrome-format=jar \
