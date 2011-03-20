@@ -154,7 +154,6 @@ Mozilla technologies in other projects and products.
 %package -n %{libname}
 Summary:        Dynamic libraries for %{name}
 Group:          System/Libraries
-Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
 Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
@@ -179,8 +178,7 @@ Obsoletes:	%{mklibname mozilla-firefox -d} < 0:3
 Obsoletes:	%{mklibname %{name}-unstable -d}
 Provides:	%{name}-devel = %{version}-%{release}
 # (tpg) see above why
-Requires:	nss-devel
-Requires:	libalsa-devel
+Requires:	nss-devel >= 2:%{nss_version}
 
 %description -n %{develname}
 Development files and headers for %{name}.
