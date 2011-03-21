@@ -19,12 +19,10 @@
 %define ffver 4.0
 %define version_internal 2.0
 
-%define prel rc2
-
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel -c %prel 2
+%define release %mkrel 1
 %else
 # Old distros
 %define subrel 1
@@ -69,7 +67,7 @@ Release:	%{release}
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}%prel.source.tar.bz2
+Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
 Source1:	%{SOURCE0}.asc
 Patch1:		xulrunner-1.9.1-max-path-len.patch
 Patch5:		mozilla-nongnome-proxies.patch
