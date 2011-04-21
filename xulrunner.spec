@@ -223,7 +223,7 @@ sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefil
 %serverbuild
 export PREFIX="%{_prefix}"
 export LIBDIR="%{_libdir}"
-export CFLAGS="$(echo %{optflags} | sed -e 's/-Wall//')"
+export CFLAGS="$(echo %{optflags} -fpermissive | sed -e 's/-Wall//')"
 export CXXFLAGS="$CFLAGS"
 %if %mdkversion >= 200900
 export LDFLAGS="%ldflags -Wl,-rpath,%{mozappdir}"
