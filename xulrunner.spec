@@ -124,6 +124,7 @@ BuildRequires:	zip
 BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
+BuildRequires:	valgrind-devel
 BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:	nspr-devel >= 2:4.8.7
