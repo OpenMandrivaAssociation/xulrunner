@@ -124,7 +124,9 @@ BuildRequires:	zip
 BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
+%if %mdkversion >= 201100
 BuildRequires:	valgrind-devel
+%endif
 BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:	nspr-devel >= 2:4.8.7
