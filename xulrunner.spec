@@ -22,7 +22,7 @@
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 %else
 # Old distros
 %define subrel 1
@@ -129,8 +129,8 @@ BuildRequires:	valgrind-devel
 %endif
 BuildRequires:	rootcerts
 BuildRequires:	python
-BuildRequires:	nspr-devel >= 2:4.8.7
-BuildRequires:	nss-static-devel >= 2:3.12.9
+BuildRequires:	nspr-devel >= 2:4.8.8
+BuildRequires:	nss-static-devel >= 2:3.12.10
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
@@ -160,7 +160,7 @@ Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
-Requires:	%{nspr_libname} >= 2:4.8.7
+Requires:	%{nspr_libname} >= 2:4.8.8
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
 %if %mdkversion >= 201100
