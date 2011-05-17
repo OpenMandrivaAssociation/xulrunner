@@ -160,7 +160,7 @@ Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
-Requires:	%{nspr_libname} >= 2:4.8.8
+Requires:	%{nspr_libname} >= 2:4.8.7
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
 %if %mdkversion >= 201100
