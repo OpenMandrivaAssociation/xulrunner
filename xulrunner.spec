@@ -129,8 +129,8 @@ BuildRequires:	valgrind-devel
 %endif
 BuildRequires:	rootcerts
 BuildRequires:	python
-BuildRequires:	nspr-devel >= 2:4.8.8
-BuildRequires:	nss-static-devel >= 2:3.12.10
+BuildRequires:	nspr-devel >= 2:4.8.7
+BuildRequires:	nss-static-devel >= 2:3.12.9
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
