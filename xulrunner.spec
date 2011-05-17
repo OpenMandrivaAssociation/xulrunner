@@ -323,7 +323,11 @@ export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
 	--enable-ogg \
 	--enable-xpcom-fastload \
 	--enable-dbus \
+%if %mdkversion >= 201100
 	--enable-libproxy \
+%else
+	--disable-libproxy \
+%endif
 	--enable-chrome-format=jar \
 	--with-distribution-id=com.mandriva
 
