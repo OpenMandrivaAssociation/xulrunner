@@ -25,7 +25,7 @@
 %define release %mkrel 2
 %else
 # Old distros
-%define subrel 2
+%define subrel 3
 %define release %mkrel 0
 %endif
 
