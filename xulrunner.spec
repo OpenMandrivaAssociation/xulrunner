@@ -16,13 +16,13 @@
 %endif
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 4.0.1
-%define version_internal 2.0.1
+%define ffver 5.0
+%define version_internal 5.0
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 2
+%define release 0
 %else
 # Old distros
 %define subrel 3
@@ -86,7 +86,6 @@ Patch16:	xulrunner-1.9.1-java-make-j1.patch
 Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
 Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
 Patch20:	xulrunner-1.9.2-helper-app.patch 
-Patch21:	mozilla-kde.patch
 Patch25:	xulrunner-1.9.2-realpath.patch
 Patch26:	mozilla-1.9.2-gtk2.diff
 Patch27:	xulrunner-2.0b4-missing-linking-libraries.patch
@@ -185,7 +184,7 @@ Requires:	nss-devel >= 2:%{nss_version}
 Development files and headers for %{name}.
 
 %prep
-%setup -qn mozilla-2.0
+%setup -qn mozilla-release
 #%patch1 -p1 -b .pathlen rediff
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
@@ -200,11 +199,10 @@ Development files and headers for %{name}.
 #%patch12 -p0 -b .strformat rediff
 #%patch14 -p1 -b .jemalloc rediff
 #%patch15 -p1 -b .gtk2
-%patch16 -p1 -b .java_make-j1
+#%patch16 -p1 -b .java_make-j1
 %patch17 -p1
 #%patch19 -p1 rediff
 #%patch20 -p1 rediff
-%patch21 -p1 -b .kde-integration
 %patch25 -p1
 
 %if %mdkversion < 200900
@@ -353,12 +351,18 @@ done
 popd
 
 # GRE stuff
-%ifarch x86_64 ia64 ppc64 s390x
-%define gre_conf_file %{version_internal}-64.system.conf
-mv %{buildroot}%{_sysconfdir}/gre.d/*.system.conf %{buildroot}%{_sysconfdir}/gre.d/%{gre_conf_file}
-%else
-%define gre_conf_file %{version_internal}.system.conf
-%endif
+#%ifarch x86_64 ia64 ppc64 s390x
+#%define gre_conf_file %{version_internal}-64.system.conf
+#mv %{buildroot}%{_sysconfdir}/gre.d/*.system.conf %{buildroot}%{_sysconfdir}/gre.d/%{gre_conf_file}
+#%else
+#%define gre_conf_file %{version_internal}.system.conf
+#%endif
+
+# Copy pc files needed by eclipse
+%{__cp} $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul.pc \
+         $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-unstable.pc
+%{__cp} $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-embedding.pc \
+         $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-embedding-unstable.pc
 
 # Don't install these in appdir
 rm  %{buildroot}%{mozappdir}/LICENSE
@@ -472,8 +476,8 @@ rm -rf %{buildroot}
 %{mozappdir}/dependentlibs.list
 #%{mozappdir}/javaxpcom.jar
 %{mozappdir}/plugin-container
-%dir %{_sysconfdir}/gre.d
-%{_sysconfdir}/gre.d/*.conf
+#%dir %{_sysconfdir}/gre.d
+#%{_sysconfdir}/gre.d/*.conf
 
 %files -n %{develname}
 %defattr(-,root,root)
