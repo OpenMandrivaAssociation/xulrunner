@@ -77,8 +77,6 @@ Patch7:		%{name}-1.9.1-pluginsdir2.patch
 Patch8:		xulrunner-1.9.0.1-version.patch
 Patch9:		xulrunner-ipc-stl.patch
 Patch10:	xulrunner-1.9.2-pkgconfig.patch
-# (salem) this patch does not work properly on ff3
-#Patch11:	xulrunner-1.9.0.1-theme-selection.patch
 Patch12:	xulrunner-1.9.0.5-fix-string-format.patch
 Patch14:	xulrunner-1.9.1-jemalloc.patch
 Patch15:	xulrunner-1.9.1-gtk2.patch
@@ -185,7 +183,6 @@ Development files and headers for %{name}.
 
 %prep
 %setup -qn mozilla-release
-#%patch1 -p1 -b .pathlen rediff
 %patch5 -p0 -b .proxy
 %patch7 -p1 -b .plugins
 %patch8 -p1 -b .version
@@ -195,14 +192,7 @@ Development files and headers for %{name}.
 %patch9 -p1 -b .ipc-stl
 %endif
 
-#%patch10 -p1 -b .pkgconfig rediff
-#%patch12 -p0 -b .strformat rediff
-#%patch14 -p1 -b .jemalloc rediff
-#%patch15 -p1 -b .gtk2
-#%patch16 -p1 -b .java_make-j1
 %patch17 -p1
-#%patch19 -p1 rediff
-#%patch20 -p1 rediff
 %patch25 -p1
 
 %if %mdkversion < 200900
@@ -350,14 +340,6 @@ for i in *.so; do
 done
 popd
 
-# GRE stuff
-#%ifarch x86_64 ia64 ppc64 s390x
-#%define gre_conf_file %{version_internal}-64.system.conf
-#mv %{buildroot}%{_sysconfdir}/gre.d/*.system.conf %{buildroot}%{_sysconfdir}/gre.d/%{gre_conf_file}
-#%else
-#%define gre_conf_file %{version_internal}.system.conf
-#%endif
-
 # Copy pc files needed by eclipse
 %{__cp} $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul.pc \
          $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-unstable.pc
@@ -367,9 +349,6 @@ popd
 # Don't install these in appdir
 rm  %{buildroot}%{mozappdir}/LICENSE
 rm  %{buildroot}%{mozappdir}/README.txt
-
-# when not building with system nspr:
-#rm -f %{buildroot}%_libdir/xulrunner-2.0/nspr-config
 
 %if %_use_syshunspell
 # Use the system hunspell dictionaries
@@ -457,7 +436,6 @@ rm -rf %{buildroot}
 %{mozappdir}/*.manifest
 %attr(644, root, root) %{mozappdir}/components/*.js
 %{mozappdir}/defaults
-#%{mozappdir}/greprefs
 %dir %{mozappdir}/icons
 %attr(644, root, root) %{mozappdir}/icons/*
 %{mozappdir}/modules
@@ -466,18 +444,13 @@ rm -rf %{buildroot}
 %{mozappdir}/*.so
 %{mozappdir}/mozilla-xremote-client
 %{mozappdir}/run-mozilla.sh
-#%{mozappdir}/regxpcom
 %{mozappdir}/greprefs.js
-#%{mozappdir}/*.chk
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-bin
 %{mozappdir}/xulrunner-stub
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
-#%{mozappdir}/javaxpcom.jar
 %{mozappdir}/plugin-container
-#%dir %{_sysconfdir}/gre.d
-#%{_sysconfdir}/gre.d/*.conf
 
 %files -n %{develname}
 %defattr(-,root,root)
