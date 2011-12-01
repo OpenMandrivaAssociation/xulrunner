@@ -341,10 +341,10 @@ done
 popd
 
 # Copy pc files needed by eclipse
-%{__cp} $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul.pc \
-         $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-unstable.pc
-%{__cp} $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-embedding.pc \
-         $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/libxul-embedding-unstable.pc
+%{__cp} %{buildroot}/%{_libdir}/pkgconfig/libxul.pc \
+         %{buildroot}/%{_libdir}/pkgconfig/libxul-unstable.pc
+%{__cp} %{buildroot}/%{_libdir}/pkgconfig/libxul-embedding.pc \
+         %{buildroot}/%{_libdir}/pkgconfig/libxul-embedding-unstable.pc
 
 # Don't install these in appdir
 rm  %{buildroot}%{mozappdir}/LICENSE
