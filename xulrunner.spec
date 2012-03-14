@@ -7,25 +7,17 @@
 # This also means only STABLE upstream releases, NO betas.
 # This is a discussed topic. Please, do not flame it again.
 
-# required for, at least, 2009.0
-%if %mdkversion < 200910
-# (tpg) nss libraries are not conventinaly named(mozilla still sux),
-# thanks to this auto dependencies are wongly generated for devel libraries
-# blacklisting all nss libraries should solve this
-%define _requires_exceptions libnss3\\|libnssutil3\\|libsmime3\\|libssl3\\|libnspr4\\|libplc4\\|libplds4
-%endif
-
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 5.0
-%define version_internal 5.0
+%define ffver 10.0.2
+%define version_internal 10.0.2
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
 # Cooker
-%define release 0
+%define release 1
 %else
 # Old distros
-%define subrel 3
+%define subrel 1
 %define release %mkrel 0
 %endif
 
@@ -47,12 +39,7 @@
 %define sqlite3_version %(pkg-config --modversion sqlite3 &>/dev/null && pkg-config --modversion sqlite3 2>/dev/null || echo 0)
 %define nss_version %(pkg-config --modversion nss &>/dev/null && pkg-config --modversion nss 2>/dev/null || echo 0)
 
-# mdv2009.0 introduced a system wide libhunspell
-%if %mdkversion >= 200900
 %define _use_syshunspell 1
-%else
-%define _use_syshunspell 0
-%endif
 
 %if %mdkversion >= 201100
 %define _use_sysvpx 1
@@ -68,66 +55,50 @@ License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
 Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
-Source1:	%{SOURCE0}.asc
-Patch1:		xulrunner-1.9.1-max-path-len.patch
-Patch5:		mozilla-nongnome-proxies.patch
-Patch7:		%{name}-1.9.1-pluginsdir2.patch
-# Fedora patches:
-# use 1.9 as xulrunner version in the dirname and not the complete version string
-Patch8:		xulrunner-1.9.0.1-version.patch
-Patch9:		xulrunner-ipc-stl.patch
-Patch10:	xulrunner-1.9.2-pkgconfig.patch
-Patch12:	xulrunner-1.9.0.5-fix-string-format.patch
-Patch14:	xulrunner-1.9.1-jemalloc.patch
-Patch15:	xulrunner-1.9.1-gtk2.patch
-Patch16:	xulrunner-1.9.1-java-make-j1.patch
-Patch17:	xulrunner-1.9.2-public-opearator-delete.patch
-Patch19:	xulrunner-1.9.2-fix-plugins-cflags.patch
-Patch20:	xulrunner-1.9.2-helper-app.patch 
-Patch25:	xulrunner-1.9.2-realpath.patch
-Patch26:	mozilla-1.9.2-gtk2.diff
-Patch27:	xulrunner-2.0b4-missing-linking-libraries.patch
+Patch0:		mozilla-nongnome-proxies.patch
+Patch1:		xulrunner-9.0-pluginsdir2.patch
+Patch2:		xulrunner-1.9.0.1-version.patch
+Patch3:		xulrunner-2.0-pkgconfig.patch
+Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
+Patch5:		add-gtkmozembed.patch
+Patch6:		firefox-10.0.2-libvpx-1.0.0.diff
+BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 %if %mdkversion > 201100
-BuildRequires:	libpng-devel >= 1.4.1
+BuildRequires:	libpng-devel >= 1.4.8
 %endif
 %if %_use_syshunspell
-BuildRequires:	libhunspell-devel
+BuildRequires:	hunspell-devel
 %endif
 %if %_use_sysvpx
-BuildRequires:	libvpx-devel
+BuildRequires:	libvpx-devel >= 0.9.7
 %endif
 BuildRequires:	libIDL2-devel
 BuildRequires:	gtk+2-devel
 BuildRequires:	libxt-devel
-BuildRequires:	startup-notification-devel
+BuildRequires:	startup-notification-devel >= 0.8
 BuildRequires:	dbus-glib-devel
-BuildRequires:	libevent-devel
-%if %mdkversion >= 201100
-# (tpg) older releases does not have SQLITE_ENABLE_UNLOCK_NOTIFY enabled
-BuildRequires:	libsqlite3-devel >= 3.7.4
-%endif
-BuildRequires:	libgnome-vfs2-devel
+BuildRequires:	libevent-devel >= 1.4.7
+BuildRequires:	sqlite3-devel >= 3.7.7.1
+BuildRequires:	gnome-vfs2-devel
 BuildRequires:	libgnome2-devel
 BuildRequires:	libgnomeui2-devel
-%if %mdkversion >= 200900
 BuildRequires:	java-rpmbuild
-%endif
-%if %mdkversion < 200900
-BuildRequires:	java-1.5.0-devel
-%endif
+BuildRequires:	unzip
 BuildRequires:	zip
 BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
+BuildRequires:	libiw-devel
 %if %mdkversion >= 201100
 BuildRequires:	valgrind-devel
 %endif
 BuildRequires:	rootcerts
 BuildRequires:	python
-BuildRequires:	nspr-devel >= 2:4.8.7
-BuildRequires:	nss-static-devel >= 2:3.12.9
+BuildRequires:  nspr-devel >= 2:4.8.8
+BuildRequires:  nss-devel >= 2:3.13.1
+BuildRequires:  nss-static-devel >= 2:3.13.1
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
@@ -135,8 +106,8 @@ BuildRequires:	mesagl-devel
 %if %mdkversion >= 201100
 BuildRequires:	cairo-devel >= 1.10
 %endif
-BuildRequires:	yasm
-BuildRequires:	libproxy-devel
+BuildRequires:	yasm >= 1.0.1
+BuildRequires:	libproxy-devel >= 0.4.4
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
@@ -182,156 +153,138 @@ Requires:	nss-devel >= 2:%{nss_version}
 Development files and headers for %{name}.
 
 %prep
+
 %setup -qn mozilla-release
-%patch5 -p0 -b .proxy
-%patch7 -p1 -b .plugins
-%patch8 -p1 -b .version
-
-%if %mdkversion < 200900
-# patch by redhat
-%patch9 -p1 -b .ipc-stl
-%endif
-
-%patch17 -p1
-%patch25 -p1
-
-%if %mdkversion < 200900
-# patch by fcrozat
-%patch26 -p0
-%endif
-
-%patch27 -p0
-
-# needed to regenerate certdata.c
-pushd security/nss/lib/ckfw/builtins
-perl ./certdata.perl < /etc/pki/tls/mozilla/certdata.txt
-popd
+%patch0 -p1 -b .nongnome-proxies
+%patch1 -p1 -b .pluginsdir2
+%patch2 -p1 -b .version
+%patch3 -p1 -b .pkgconfig
+%patch4 -p1 -b .public-opearator-delete
+%patch5 -p2 -b .gtkmozembed
+%patch6 -p0 -b .libvpx-1.0.0
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
 
 %build
-%serverbuild
-export PREFIX="%{_prefix}"
-export LIBDIR="%{_libdir}"
-export CFLAGS="$(echo %{optflags} -fpermissive | sed -e 's/-Wall//')"
-export CXXFLAGS="$CFLAGS"
-%if %mdkversion >= 200900
-export LDFLAGS="%ldflags -Wl,-rpath,%{mozappdir}"
+# (gmoro) please dont enable all options by hand
+# we need to trust firefox defaults
+export MOZCONFIG=`pwd`/mozconfig
+cat << EOF > $MOZCONFIG
+mk_add_options MOZILLA_OFFICIAL=1
+mk_add_options BUILD_OFFICIAL=1
+#mk_add_options MOZ_MAKE_FLAGS="%{_smp_mflags}"
+mk_add_options MOZ_OBJDIR=@TOPSRCDIR@
+ac_add_options --prefix="%{_prefix}"
+ac_add_options --libdir="%{_libdir}"
+ac_add_options --sysconfdir="%{_sysconfdir}"
+ac_add_options --mandir="%{_mandir}"
+ac_add_options --includedir="%{_includedir}"
+ac_add_options --datadir="%{_datadir}"
+ac_add_options --enable-application=xulrunner
+ac_add_options --with-pthreads
+ac_add_options --with-system-nspr
+ac_add_options --with-system-nss
+ac_add_options --with-system-jpeg
+ac_add_options --with-system-zlib
+ac_add_options --with-system-libevent
+ac_add_options --with-system-libvpx
+%if %mdkversion >= 201101
+ac_add_options --with-system-png
 %else
-# macro ldflags is nonexisting in older distro versions
-export LDFLAGS="$LDFLAGS -Wl,-rpath,%{mozappdir}"
+ac_add_options --disable-system-png
 %endif
-
-# (tpg) don't use macro here
-# (fhimpe) Starting from Firefox 4.0b10, at least sqlite 3.6.4 is needed
-# so don't use system sqlite on Mandriva older than 2009.0
-./configure --build=%{_target_platform} \
-	--host=%_host --target=%_target_platform \
-	--prefix=%{_prefix} \
-	--bindir=%{_bindir} \
-	--libdir=%{_libdir} \
-	--includedir=%{_includedir} \
-	--datadir=%{_datadir} \
-	--sysconfdir=%{_sysconfdir} \
-	--enable-application=xulrunner \
-	--with-pthreads \
-	--with-system-jpeg \
-	--with-system-zlib \
-	--with-system-bz2 \
-	--with-system-libevent \
-%if %mdkversion > 201100
-	--with-system-png \
-%else
-	--without-system-png \
-%endif
-	--with-system-nspr \
-	--with-system-nss \
+ac_add_options --with-system-bz2
+ac_add_options --enable-system-sqlite
 %if %mdkversion >= 201100
-	--enable-system-sqlite \
+ac_add_options --enable-system-cairo
 %else
-	--disable-system-sqlite \
-%endif
-%if %mdkversion >= 201100
-	--enable-system-cairo \
-%else
-	--disable-system-cairo \
+ac_add_options --disable-system-cairo
 %endif
 %if %_use_syshunspell
-	--enable-system-hunspell \
+ac_add_options --enable-system-hunspell
 %endif
-%if %_use_sysvpx
-	--with-system-libvpx \
-%endif
-	--disable-javaxpcom \
-	--enable-pango \
-	--enable-svg \
-	--enable-canvas \
-	--enable-crypto \
-	--disable-crashreporter \
-	--disable-installer \
-	--disable-updater \
-	--enable-optimize \
-	--enable-jemalloc \
-	--disable-wrap-malloc \
-	--enable-valgrind \
-	--disable-strip \
-	--enable-install-strip \
-	--enable-startup-notification \
-	--enable-default-toolkit=cairo-gtk2 \
-	--enable-shared-js \
-	--with-java-include-path=%{java_home}/include \
-	--with-java-bin-path=%{java_home}/bin \
-	--enable-image-encoder=all \
-	--enable-image-decoders=all \
-	--enable-places \
-	--enable-storage \
-	--enable-safe-browsing \
-	--enable-url-classifier \
+ac_add_options --disable-javaxpcom
+ac_add_options --enable-pango
+ac_add_options --enable-svg
+ac_add_options --enable-canvas
+ac_add_options --enable-crypto
+ac_add_options --disable-crashreporter
+ac_add_options --disable-installer
+ac_add_options --disable-updater
+ac_add_options --enable-optimize
+ac_add_options --enable-jemalloc
+ac_add_options --disable-wrap-malloc
+ac_add_options --enable-valgrind
+ac_add_options --disable-strip
+ac_add_options --enable-install-strip
+ac_add_options --enable-startup-notification
+ac_add_options --enable-default-toolkit=cairo-gtk2
+ac_add_options --enable-shared-js
+ac_add_options --with-java-include-path=%{java_home}/include
+ac_add_options --with-java-bin-path=%{java_home}/bin
+ac_add_options --enable-image-encoder=all
+ac_add_options --enable-image-decoders=all
+ac_add_options --enable-places
+ac_add_options --enable-storage
+ac_add_options --enable-safe-browsing
+ac_add_options --enable-url-classifier
 %if %mdkversion >= 201100
-	--enable-gio \
-	--disable-gnomevfs \
+ac_add_options --enable-gio
+ac_add_options --disable-gnomevfs
 %else
-	--enable-gnomevfs \
+ac_add_options --enable-gnomevfs
 %endif
-	--enable-gnomeui \
-	--disable-faststart \
-	--enable-smil \
-	--disable-tree-freetype \
-	--enable-canvas3d \
-	--disable-coretext \
-	--enable-extensions=default \
-	--enable-necko-protocols=all \
-	--disable-necko-wifi \
-	--disable-tests \
-	--disable-mochitest \
-	--enable-xtf \
-	--enable-wave \
-	--enable-webm \
-	--enable-ogg \
-	--enable-xpcom-fastload \
-	--enable-dbus \
-%if %mdkversion >= 201100
-	--enable-libproxy \
-%else
-	--disable-libproxy \
+ac_add_options --enable-gnomeui
+ac_add_options --disable-faststart
+ac_add_options --enable-smil
+ac_add_options --disable-tree-freetype
+ac_add_options --enable-canvas3d
+ac_add_options --disable-coretext
+ac_add_options --enable-extensions=default
+ac_add_options --enable-necko-protocols=all
+ac_add_options --disable-necko-wifi
+ac_add_options --disable-tests
+ac_add_options --disable-mochitest
+ac_add_options --enable-xtf
+ac_add_options --enable-wave
+ac_add_options --enable-ogg
+ac_add_options --enable-xpcom-fastload
+ac_add_options --enable-dbus
+ac_add_options --enable-libproxy
+ac_add_options --enable-chrome-format=jar
+ac_add_options --with-distribution-id=com.mandriva
+ac_add_options --disable-cpp-exceptions
+EOF
+
+# Mozilla builds with -Wall with exception of a few warnings which show up
+# everywhere in the code; so, don't override that.
+#
+# Disable C++ exceptions since Mozilla code is not exception-safe
+#
+MOZ_OPT_FLAGS=$(echo "$RPM_OPT_FLAGS" | sed -e 's/-Wall//' -e 's/-fexceptions/-fno-exceptions/g')
+export CFLAGS="$MOZ_OPT_FLAGS"
+export CXXFLAGS="$MOZ_OPT_FLAGS"
+export PREFIX="%{_prefix}"
+export LIBDIR="%{_libdir}"
+
+MOZ_SMP_FLAGS=-j1
+# On x86 architectures, Mozilla can build up to 4 jobs at once in parallel,
+# however builds tend to fail on other arches when building in parallel.
+%ifarch %{ix86} x86_64
+[ -z "$RPM_BUILD_NCPUS" ] && \
+     RPM_BUILD_NCPUS="`/usr/bin/getconf _NPROCESSORS_ONLN`"
+[ "$RPM_BUILD_NCPUS" -ge 2 ] && MOZ_SMP_FLAGS=-j2
+[ "$RPM_BUILD_NCPUS" -ge 4 ] && MOZ_SMP_FLAGS=-j4
 %endif
-	--enable-chrome-format=jar \
-	--with-distribution-id=com.mandriva
 
-%__perl -p -i -e 's|\-0|\-9|g' config/make-jars.pl
-
-# (tpg) on x86_64 fails when parallel compiling is on
-# java.lang.OutOfMemoryError
-# since 3.6 it does not
-%make
+export LDFLAGS="%{ldflags}"
+make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
 
 %install
 rm -rf %{buildroot}
 
-%makeinstall_std
-
-#install -p dist/sdk/bin/regxpcom %{buildroot}%{mozappdir}
+%makeinstall_std STRIP=/bin/true
 
 rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
 pushd %{buildroot}%{mozappdir}
@@ -402,8 +355,6 @@ pref("layout.css.visited_links_enabled", false);
 pref("security.ssl.require_safe_negotiation", false);
 EOF
 
-%find_lang %{name}
-
 mkdir -p %{buildroot}%{_sys_macros_dir}
 cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
 # Macros from %{name} package
@@ -436,8 +387,6 @@ rm -rf %{buildroot}
 %{mozappdir}/*.manifest
 %attr(644, root, root) %{mozappdir}/components/*.js
 %{mozappdir}/defaults
-%dir %{mozappdir}/icons
-%attr(644, root, root) %{mozappdir}/icons/*
 %{mozappdir}/modules
 %{mozappdir}/plugins
 %{mozappdir}/res
@@ -451,14 +400,12 @@ rm -rf %{buildroot}
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
 %{mozappdir}/plugin-container
+%{mozappdir}/hyphenation
 
 %files -n %{develname}
 %defattr(-,root,root)
 %{_includedir}/%{name}-%{version_internal}
 %{mozappdir}/xpcshell
-%{mozappdir}/xpidl
-%{mozappdir}/xpt_dump
-%{mozappdir}/xpt_link
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
