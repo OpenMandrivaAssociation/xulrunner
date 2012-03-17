@@ -8,8 +8,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 10.0.2
-%define version_internal 10.0.2
+%define ffver 11.0
+%define version_internal 11.0
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
@@ -41,12 +41,6 @@
 
 %define _use_syshunspell 1
 
-%if %mdkversion >= 201100
-%define _use_sysvpx 1
-%else
-%define _use_sysvpx 0
-%endif
-
 Summary:	XUL Runtime for Gecko Applications
 Name:		xulrunner
 Version:	%{version_internal}
@@ -60,7 +54,6 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
-Patch5:		add-gtkmozembed.patch
 Patch6:		firefox-10.0.2-libvpx-1.0.0.diff
 BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
@@ -71,9 +64,7 @@ BuildRequires:	libpng-devel >= 1.4.8
 %if %_use_syshunspell
 BuildRequires:	hunspell-devel
 %endif
-%if %_use_sysvpx
 BuildRequires:	libvpx-devel >= 0.9.7
-%endif
 BuildRequires:	libIDL2-devel
 BuildRequires:	gtk+2-devel
 BuildRequires:	libxt-devel
@@ -96,9 +87,9 @@ BuildRequires:	valgrind-devel
 %endif
 BuildRequires:	rootcerts
 BuildRequires:	python
-BuildRequires:  nspr-devel >= 2:4.8.8
-BuildRequires:  nss-devel >= 2:3.13.1
-BuildRequires:  nss-static-devel >= 2:3.13.1
+BuildRequires:  nspr-devel >= 2:4.9.0
+BuildRequires:  nss-devel >= 2:3.13.3
+BuildRequires:  nss-static-devel >= 2:3.13.3
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
@@ -128,12 +119,10 @@ Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
-Requires:	%{nspr_libname} >= 2:4.8.7
+Requires:	%{nspr_libname} >= 2:4.9.0
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
-%if %mdkversion >= 201100
 Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
-%endif
 
 %description -n %{libname}
 Dynamic libraries for %{name}.
@@ -155,13 +144,15 @@ Development files and headers for %{name}.
 %prep
 
 %setup -qn mozilla-release
-%patch0 -p1 -b .nongnome-proxies
+%patch0 -p0 -b .nongnome-proxies
 %patch1 -p1 -b .pluginsdir2
 %patch2 -p1 -b .version
 %patch3 -p1 -b .pkgconfig
 %patch4 -p1 -b .public-opearator-delete
-%patch5 -p2 -b .gtkmozembed
+
+%if %mdkversion >= 201200
 %patch6 -p0 -b .libvpx-1.0.0
+%endif
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
