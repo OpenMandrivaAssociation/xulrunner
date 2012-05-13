@@ -54,7 +54,6 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
-Patch6:		firefox-10.0.2-libvpx-1.0.0.diff
 
 BuildRequires:	doxygen
 BuildRequires:	java-rpmbuild
@@ -65,36 +64,35 @@ BuildRequires:	rootcerts
 BuildRequires:	unzip
 BuildRequires:	yasm >= 1.0.1
 BuildRequires:	zip
-BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
-%if %mdkversion > 201100
-BuildRequires:	libpng-devel >= 1.4.8
-BuildRequires:	valgrind-devel
-BuildRequires:	cairo-devel >= 1.10
-%endif
+BuildRequires:	nss-static-devel >= 2:3.13.3
+BuildRequires:	pkgconfig(alsa)
+BuildRequires:	pkgconfig(dbus-glib-1)
+BuildRequires:	pkgconfig(gl)
+BuildRequires:	pkgconfig(gtk+-2.0)
+BuildRequires:	pkgconfig(libevent) >= 1.4.7
+BuildRequires:	pkgconfig(libgnomeui-2.0)
+BuildRequires:	pkgconfig(libIDL-2.0)
+BuildRequires:	pkgconfig(libnotify)
+BuildRequires:	pkgconfig(libproxy-1.0) >= 0.4.4
+BuildRequires:	pkgconfig(libstartup-notification-1.0)
+BuildRequires:	pkgconfig(nspr)
+BuildRequires:	pkgconfig(nss)
+BuildRequires:	pkgconfig(pango)
+BuildRequires:	pkgconfig(sqlite3) >= 3.7.7.1
+BuildRequires:	pkgconfig(vpx) >= 0.9.7
+BuildRequires:	pkgconfig(xt)
+BuildRequires:	pkgconfig(zlib)
 %if %_use_syshunspell
-BuildRequires:	hunspell-devel
+BuildRequires:	pkgconfig(hunspell)
 %endif
-BuildRequires:	libvpx-devel >= 0.9.7
-BuildRequires:	libIDL2-devel
-BuildRequires:	gtk+2-devel
-BuildRequires:	libxt-devel
-BuildRequires:	startup-notification-devel >= 0.8
-BuildRequires:	dbus-glib-devel
-BuildRequires:	libevent-devel >= 1.4.7
-BuildRequires:	sqlite3-devel >= 3.7.7.1
+%if %mdkversion > 201100
+BuildRequires:	pkgconfig(cairo) >= 1.10
+BuildRequires:	pkgconfig(libpng) >= 1.4.8
+BuildRequires:	pkgconfig(valgrind)
+%else
 BuildRequires:	gnome-vfs2-devel
-BuildRequires:	libgnome2-devel
-BuildRequires:	libgnomeui2-devel
-BuildRequires:	libiw-devel
-BuildRequires:  nspr-devel >= 2:4.9.0
-BuildRequires:  nss-devel >= 2:3.13.3
-BuildRequires:  nss-static-devel >= 2:3.13.3
-BuildRequires:	pango-devel
-BuildRequires:	libalsa-devel
-BuildRequires:	libnotify-devel
-BuildRequires:	mesagl-devel
-BuildRequires:	libproxy-devel >= 0.4.4
+%endif
 
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
@@ -144,10 +142,6 @@ Development files and headers for %{name}.
 %patch3 -p1 -b .pkgconfig
 %patch4 -p1 -b .public-opearator-delete
 
-%if %mdkversion >= 201200
-%patch6 -p0 -b .libvpx-1.0.0
-%endif
-
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
 
@@ -174,18 +168,18 @@ ac_add_options --with-system-jpeg
 ac_add_options --with-system-zlib
 ac_add_options --with-system-libevent
 ac_add_options --with-system-libvpx
-%if %mdkversion >= 201101
+%if %mdkversion >= 201100
 ac_add_options --with-system-png
+ac_add_options --enable-system-cairo
+ac_add_options --enable-gio
+ac_add_options --disable-gnomevfs
 %else
 ac_add_options --disable-system-png
+ac_add_options --disable-system-cairo
+ac_add_options --enable-gnomevfs
 %endif
 ac_add_options --with-system-bz2
 ac_add_options --enable-system-sqlite
-%if %mdkversion >= 201100
-ac_add_options --enable-system-cairo
-%else
-ac_add_options --disable-system-cairo
-%endif
 %if %_use_syshunspell
 ac_add_options --enable-system-hunspell
 %endif
@@ -214,12 +208,6 @@ ac_add_options --enable-places
 ac_add_options --enable-storage
 ac_add_options --enable-safe-browsing
 ac_add_options --enable-url-classifier
-%if %mdkversion >= 201100
-ac_add_options --enable-gio
-ac_add_options --disable-gnomevfs
-%else
-ac_add_options --enable-gnomevfs
-%endif
 ac_add_options --enable-gnomeui
 ac_add_options --disable-faststart
 ac_add_options --enable-smil
