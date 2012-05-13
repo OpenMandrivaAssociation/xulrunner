@@ -8,8 +8,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 11.0
-%define version_internal 11.0
+%define ffver 12.0
+%define version_internal 12.0
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
@@ -55,11 +55,22 @@ Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
 Patch6:		firefox-10.0.2-libvpx-1.0.0.diff
-BuildRequires:	autoconf2.1
+
+BuildRequires:	doxygen
+BuildRequires:	java-rpmbuild
+BuildRequires:	makedepend
+BuildRequires:	valgrind
+BuildRequires:	python
+BuildRequires:	rootcerts
+BuildRequires:	unzip
+BuildRequires:	yasm >= 1.0.1
+BuildRequires:	zip
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 %if %mdkversion > 201100
 BuildRequires:	libpng-devel >= 1.4.8
+BuildRequires:	valgrind-devel
+BuildRequires:	cairo-devel >= 1.10
 %endif
 %if %_use_syshunspell
 BuildRequires:	hunspell-devel
@@ -75,18 +86,7 @@ BuildRequires:	sqlite3-devel >= 3.7.7.1
 BuildRequires:	gnome-vfs2-devel
 BuildRequires:	libgnome2-devel
 BuildRequires:	libgnomeui2-devel
-BuildRequires:	java-rpmbuild
-BuildRequires:	unzip
-BuildRequires:	zip
-BuildRequires:	doxygen
-BuildRequires:	makedepend
-BuildRequires:	valgrind
 BuildRequires:	libiw-devel
-%if %mdkversion >= 201100
-BuildRequires:	valgrind-devel
-%endif
-BuildRequires:	rootcerts
-BuildRequires:	python
 BuildRequires:  nspr-devel >= 2:4.9.0
 BuildRequires:  nss-devel >= 2:3.13.3
 BuildRequires:  nss-static-devel >= 2:3.13.3
@@ -94,14 +94,10 @@ BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	libnotify-devel
 BuildRequires:	mesagl-devel
-%if %mdkversion >= 201100
-BuildRequires:	cairo-devel >= 1.10
-%endif
-BuildRequires:	yasm >= 1.0.1
 BuildRequires:	libproxy-devel >= 0.4.4
+
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
-BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 
 %description
 XULRunner is a Mozilla runtime package that can be used to
@@ -120,9 +116,9 @@ Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
 Requires:	%{nspr_libname} >= 2:4.9.0
+Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
-Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
 
 %description -n %{libname}
 Dynamic libraries for %{name}.
@@ -131,12 +127,10 @@ Dynamic libraries for %{name}.
 Summary:	Development files for %{name}
 Group:		Development/Other
 Requires:	%{name} = %{version}-%{release}
+Requires:	nss-devel >= 2:%{nss_version}
 Obsoletes:	xulrunner-devel < 1.9.2
-Obsoletes:	%{mklibname mozilla-firefox -d} < 0:3
-Obsoletes:	%{mklibname %{name}-unstable -d}
 Provides:	%{name}-devel = %{version}-%{release}
 # (tpg) see above why
-Requires:	nss-devel >= 2:%{nss_version}
 
 %description -n %{develname}
 Development files and headers for %{name}.
@@ -273,8 +267,6 @@ export LDFLAGS="%{ldflags}"
 make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
 
 %install
-rm -rf %{buildroot}
-
 %makeinstall_std STRIP=/bin/true
 
 rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
@@ -355,17 +347,12 @@ cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
 %%xulrunner_mozappdir        %{mozappdir}
 FIN
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root)
 %doc LICENSE README.txt
 %dir %{mozappdir}
 %{_bindir}/xulrunner
 
 %files -n %{libname}
-%defattr(-,root,root)
 %dir %{mozappdir}
 %{mozappdir}/chrome
 %{mozappdir}/dictionaries
@@ -394,7 +381,6 @@ rm -rf %{buildroot}
 %{mozappdir}/hyphenation
 
 %files -n %{develname}
-%defattr(-,root,root)
 %{_includedir}/%{name}-%{version_internal}
 %{mozappdir}/xpcshell
 %{_libdir}/%{name}-devel-%{version_internal}
