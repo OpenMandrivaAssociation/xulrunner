@@ -54,6 +54,8 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
+# https://bugzilla.mozilla.org/show_bug.cgi?id=722975
+Patch5:		firefox_add_ifdefs_to_gfx_thebes_gfxPlatform.cpp.patch
 
 BuildRequires:	doxygen
 BuildRequires:	java-rpmbuild
@@ -141,6 +143,7 @@ Development files and headers for %{name}.
 %patch2 -p1 -b .version
 %patch3 -p1 -b .pkgconfig
 %patch4 -p1 -b .public-opearator-delete
+%patch5 -p1
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
