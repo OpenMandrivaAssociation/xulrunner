@@ -8,8 +8,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 12.0
-%define version_internal 12.0
+%define ffver 13.0
+%define version_internal 13.0
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
@@ -54,50 +54,55 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
-# https://bugzilla.mozilla.org/show_bug.cgi?id=722975
-Patch5:		firefox_add_ifdefs_to_gfx_thebes_gfxPlatform.cpp.patch
-
-BuildRequires:	doxygen
+Patch6:		firefox-10.0.2-libvpx-1.0.0.diff
+Patch7:		firefox-13.0-nspr_header_fix.diff
+BuildRequires:	autoconf2.1
+BuildRequires:	zlib-devel
+BuildRequires:	bzip2-devel
+%if %mdkversion > 201100
+BuildRequires:	libpng-devel >= 1.4.8
+%endif
+%if %_use_syshunspell
+BuildRequires:	hunspell-devel
+%endif
+BuildRequires:	libvpx-devel >= 0.9.7
+BuildRequires:	libIDL2-devel
+BuildRequires:	gtk+2-devel
+BuildRequires:	libxt-devel
+BuildRequires:	startup-notification-devel >= 0.8
+BuildRequires:	dbus-glib-devel
+BuildRequires:	libevent-devel >= 1.4.7
+BuildRequires:	sqlite3-devel >= 3.7.7.1
+BuildRequires:	gnome-vfs2-devel
+BuildRequires:	libgnome2-devel
+BuildRequires:	libgnomeui2-devel
 BuildRequires:	java-rpmbuild
+BuildRequires:	unzip
+BuildRequires:	zip
+BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
-BuildRequires:	python
+BuildRequires:	libiw-devel
+%if %mdkversion >= 201100
+BuildRequires:	valgrind-devel
+%endif
 BuildRequires:	rootcerts
-BuildRequires:	unzip
+BuildRequires:	python
+BuildRequires:  nspr-devel >= 2:4.9.0
+BuildRequires:  nss-devel >= 2:3.13.3
+BuildRequires:  nss-static-devel >= 2:3.13.3
+BuildRequires:	pango-devel
+BuildRequires:	libalsa-devel
+BuildRequires:	libnotify-devel
+BuildRequires:	mesagl-devel
+%if %mdkversion >= 201100
+BuildRequires:	cairo-devel >= 1.10
+%endif
 BuildRequires:	yasm >= 1.0.1
-BuildRequires:	zip
-BuildRequires:	bzip2-devel
-BuildRequires:	nss-static-devel >= 2:3.13.3
-BuildRequires:	pkgconfig(alsa)
-BuildRequires:	pkgconfig(dbus-glib-1)
-BuildRequires:	pkgconfig(gl)
-BuildRequires:	pkgconfig(gtk+-2.0)
-BuildRequires:	pkgconfig(libevent) >= 1.4.7
-BuildRequires:	pkgconfig(libgnomeui-2.0)
-BuildRequires:	pkgconfig(libIDL-2.0)
-BuildRequires:	pkgconfig(libnotify)
-BuildRequires:	pkgconfig(libproxy-1.0) >= 0.4.4
-BuildRequires:	pkgconfig(libstartup-notification-1.0)
-BuildRequires:	pkgconfig(nspr)
-BuildRequires:	pkgconfig(nss)
-BuildRequires:	pkgconfig(pango)
-BuildRequires:	pkgconfig(sqlite3) >= 3.7.7.1
-BuildRequires:	pkgconfig(vpx) >= 0.9.7
-BuildRequires:	pkgconfig(xt)
-BuildRequires:	pkgconfig(zlib)
-%if %_use_syshunspell
-BuildRequires:	pkgconfig(hunspell)
-%endif
-%if %mdkversion > 201100
-BuildRequires:	pkgconfig(cairo) >= 1.10
-BuildRequires:	pkgconfig(libpng) >= 1.4.8
-BuildRequires:	pkgconfig(valgrind)
-%else
-BuildRequires:	gnome-vfs2-devel
-%endif
-
+BuildRequires:	libproxy-devel >= 0.4.4
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
+BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 
 %description
 XULRunner is a Mozilla runtime package that can be used to
@@ -116,9 +121,9 @@ Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
 Requires:	%{nspr_libname} >= 2:4.9.0
-Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
 # (salem) bug #42680 for noarch packages
 Provides:	libxulrunner = %{version}-%{release}
+Requires:	%{mklibname sqlite3_ 0} >= %{sqlite3_version}
 
 %description -n %{libname}
 Dynamic libraries for %{name}.
@@ -127,10 +132,12 @@ Dynamic libraries for %{name}.
 Summary:	Development files for %{name}
 Group:		Development/Other
 Requires:	%{name} = %{version}-%{release}
-Requires:	nss-devel >= 2:%{nss_version}
 Obsoletes:	xulrunner-devel < 1.9.2
+Obsoletes:	%{mklibname mozilla-firefox -d} < 0:3
+Obsoletes:	%{mklibname %{name}-unstable -d}
 Provides:	%{name}-devel = %{version}-%{release}
 # (tpg) see above why
+Requires:	nss-devel >= 2:%{nss_version}
 
 %description -n %{develname}
 Development files and headers for %{name}.
@@ -143,7 +150,15 @@ Development files and headers for %{name}.
 %patch2 -p1 -b .version
 %patch3 -p1 -b .pkgconfig
 %patch4 -p1 -b .public-opearator-delete
-%patch5 -p1
+
+%if %mdkversion >= 201200
+%patch6 -p0 -b .libvpx-1.0.0
+%else
+# the bundled libvpx is 0.9.2 + mozilla patches. this is fixed in 0.9.7
+perl -pi -e "s|VPX_CODEC_USE_INPUT_FRAGMENTS|VPX_CODEC_USE_INPUT_PARTITION|g" configure*
+%endif
+
+%patch7 -p0
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
@@ -156,7 +171,8 @@ cat << EOF > $MOZCONFIG
 mk_add_options MOZILLA_OFFICIAL=1
 mk_add_options BUILD_OFFICIAL=1
 #mk_add_options MOZ_MAKE_FLAGS="%{_smp_mflags}"
-mk_add_options MOZ_OBJDIR=@TOPSRCDIR@
+#mk_add_options MOZ_OBJDIR=@TOPSRCDIR@
+mk_add_options MOZ_OBJDIR=`pwd`/objdir
 ac_add_options --prefix="%{_prefix}"
 ac_add_options --libdir="%{_libdir}"
 ac_add_options --sysconfdir="%{_sysconfdir}"
@@ -171,18 +187,18 @@ ac_add_options --with-system-jpeg
 ac_add_options --with-system-zlib
 ac_add_options --with-system-libevent
 ac_add_options --with-system-libvpx
-%if %mdkversion >= 201100
+%if %mdkversion >= 201101
 ac_add_options --with-system-png
-ac_add_options --enable-system-cairo
-ac_add_options --enable-gio
-ac_add_options --disable-gnomevfs
 %else
 ac_add_options --disable-system-png
-ac_add_options --disable-system-cairo
-ac_add_options --enable-gnomevfs
 %endif
 ac_add_options --with-system-bz2
 ac_add_options --enable-system-sqlite
+%if %mdkversion >= 201100
+ac_add_options --enable-system-cairo
+%else
+ac_add_options --disable-system-cairo
+%endif
 %if %_use_syshunspell
 ac_add_options --enable-system-hunspell
 %endif
@@ -211,6 +227,12 @@ ac_add_options --enable-places
 ac_add_options --enable-storage
 ac_add_options --enable-safe-browsing
 ac_add_options --enable-url-classifier
+%if %mdkversion >= 201100
+ac_add_options --enable-gio
+ac_add_options --disable-gnomevfs
+%else
+ac_add_options --enable-gnomevfs
+%endif
 ac_add_options --enable-gnomeui
 ac_add_options --disable-faststart
 ac_add_options --enable-smil
@@ -255,10 +277,13 @@ MOZ_SMP_FLAGS=-j1
 %endif
 
 export LDFLAGS="%{ldflags}"
+make -f client.mk clean
 make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
 
 %install
-%makeinstall_std STRIP=/bin/true
+rm -rf %{buildroot}
+
+%makeinstall_std -C objdir STRIP=/bin/true
 
 rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
 pushd %{buildroot}%{mozappdir}
@@ -338,12 +363,17 @@ cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
 %%xulrunner_mozappdir        %{mozappdir}
 FIN
 
+%clean
+rm -rf %{buildroot}
+
 %files
+%defattr(-,root,root)
 %doc LICENSE README.txt
 %dir %{mozappdir}
 %{_bindir}/xulrunner
 
 %files -n %{libname}
+%defattr(-,root,root)
 %dir %{mozappdir}
 %{mozappdir}/chrome
 %{mozappdir}/dictionaries
@@ -372,6 +402,7 @@ FIN
 %{mozappdir}/hyphenation
 
 %files -n %{develname}
+%defattr(-,root,root)
 %{_includedir}/%{name}-%{version_internal}
 %{mozappdir}/xpcshell
 %{_libdir}/%{name}-devel-%{version_internal}
