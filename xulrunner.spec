@@ -54,8 +54,8 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
-Patch6:		firefox-10.0.2-libvpx-1.0.0.diff
 Patch7:		firefox-13.0-nspr_header_fix.diff
+Patch8:		firefox-13-fix-cairo-build.patch
 BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
@@ -151,14 +151,13 @@ Development files and headers for %{name}.
 %patch3 -p1 -b .pkgconfig
 %patch4 -p1 -b .public-opearator-delete
 
-%if %mdkversion >= 201200
-%patch6 -p0 -b .libvpx-1.0.0
-%else
+%if %mdkversion < 201200
 # the bundled libvpx is 0.9.2 + mozilla patches. this is fixed in 0.9.7
 perl -pi -e "s|VPX_CODEC_USE_INPUT_FRAGMENTS|VPX_CODEC_USE_INPUT_PARTITION|g" configure*
 %endif
 
 %patch7 -p0
+%patch8 -p1
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
