@@ -8,8 +8,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 13.0.1
-%define version_internal 13.0.1
+%define ffver 14.0.1
+%define version_internal 14.0.1
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
@@ -54,8 +54,6 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
-Patch7:		firefox-13.0-nspr_header_fix.diff
-Patch8:		firefox-13-fix-cairo-build.patch
 BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
@@ -154,10 +152,8 @@ Development files and headers for %{name}.
 %if %mdkversion < 201200
 # the bundled libvpx is 0.9.2 + mozilla patches. this is fixed in 0.9.7
 perl -pi -e "s|VPX_CODEC_USE_INPUT_FRAGMENTS|VPX_CODEC_USE_INPUT_PARTITION|g" configure*
+perl -pi -e "s|vpx >= 1.0.0|vpx >= 0.9.7|g" configure*
 %endif
-
-%patch7 -p0
-%patch8 -p1
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
@@ -277,12 +273,12 @@ MOZ_SMP_FLAGS=-j1
 
 export LDFLAGS="%{ldflags}"
 make -f client.mk clean
-make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
+make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1" MOZ_PKG_FATAL_WARNINGS=0
 
 %install
 rm -rf %{buildroot}
 
-%makeinstall_std -C objdir STRIP=/bin/true
+%makeinstall_std -C objdir STRIP=/bin/true MOZ_PKG_FATAL_WARNINGS=0
 
 rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
 pushd %{buildroot}%{mozappdir}
@@ -299,7 +295,7 @@ popd
 
 # Don't install these in appdir
 rm  %{buildroot}%{mozappdir}/LICENSE
-rm  %{buildroot}%{mozappdir}/README.txt
+rm  %{buildroot}%{mozappdir}/README.xulrunner
 
 %if %_use_syshunspell
 # Use the system hunspell dictionaries
@@ -390,7 +386,7 @@ rm -rf %{buildroot}
 %{mozappdir}/res
 %{mozappdir}/*.so
 %{mozappdir}/mozilla-xremote-client
-%{mozappdir}/run-mozilla.sh
+#%{mozappdir}/run-mozilla.sh
 %{mozappdir}/greprefs.js
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-bin
@@ -403,7 +399,7 @@ rm -rf %{buildroot}
 %files -n %{develname}
 %defattr(-,root,root)
 %{_includedir}/%{name}-%{version_internal}
-%{mozappdir}/xpcshell
+#%{mozappdir}/xpcshell
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
