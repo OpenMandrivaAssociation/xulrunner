@@ -54,6 +54,7 @@ Patch1:		xulrunner-9.0-pluginsdir2.patch
 Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
+Patch8:		firefox-13-fix-cairo-build.patch
 BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
@@ -154,6 +155,8 @@ Development files and headers for %{name}.
 perl -pi -e "s|VPX_CODEC_USE_INPUT_FRAGMENTS|VPX_CODEC_USE_INPUT_PARTITION|g" configure*
 perl -pi -e "s|vpx >= 1.0.0|vpx >= 0.9.7|g" configure*
 %endif
+
+%patch8 -p1
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
