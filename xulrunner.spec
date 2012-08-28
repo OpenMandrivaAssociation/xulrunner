@@ -8,8 +8,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 14.0.1
-%define version_internal 14.0.1
+%define ffver 15.0
+%define version_internal 15.0
 
 # (tpg) define release here
 %if %mandriva_branch == Cooker
