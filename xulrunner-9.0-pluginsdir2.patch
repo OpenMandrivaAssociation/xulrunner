@@ -1,0 +1,27 @@
+diff -Naur mozilla-1.9.1/xpcom/io/nsAppFileLocationProvider.cpp mozilla-1.9.1.tpg/xpcom/io/nsAppFileLocationProvider.cpp
+--- mozilla-1.9.1/xpcom/io/nsAppFileLocationProvider.cpp	2009-07-15 15:36:07.000000000 +0000
++++ mozilla-1.9.1.tpg/xpcom/io/nsAppFileLocationProvider.cpp	2009-07-25 14:56:12.000000000 +0000
+@@ -203,6 +203,14 @@
+         if (NS_SUCCEEDED(rv))
+             rv = localFile->AppendRelativeNativePath(PLUGINS_DIR_NAME);
+     }
++    else if (nsCRT::strcmp(prop, "/usr/lib64/mozilla/plugins") == 0)
++    {
++        rv = NS_NewNativeLocalFile(nsDependentCString("/usr/lib64/mozilla/plugins"), PR_TRUE, getter_AddRefs(localFile));
++    }
++    else if (nsCRT::strcmp(prop, "/usr/lib/mozilla/plugins") == 0)
++    {
++        rv = NS_NewNativeLocalFile(nsDependentCString("/usr/lib/mozilla/plugins"), PR_TRUE, getter_AddRefs(localFile));
++    }
+ #ifdef MOZ_WIDGET_COCOA
+     else if (nsCRT::strcmp(prop, NS_MACOSX_USER_PLUGIN_DIR) == 0)
+     {
+@@ -593,7 +601,7 @@
+         *_retval = new nsAppDirectoryEnumerator(this, keys);
+ #else
+ #ifdef XP_UNIX
+-        static const char* keys[] = { nsnull, NS_USER_PLUGINS_DIR, NS_APP_PLUGINS_DIR, NS_SYSTEM_PLUGINS_DIR, nsnull };
++        static const char* keys[] = { nsnull, "/usr/lib64/mozilla/plugins", "/usr/lib/mozilla/plugins", NS_USER_PLUGINS_DIR, NS_APP_PLUGINS_DIR, nsnull };
+ #else
+         static const char* keys[] = { nsnull, NS_USER_PLUGINS_DIR, NS_APP_PLUGINS_DIR, nsnull };
+ #endif

@@ -1,0 +1,17 @@
+--- toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp	2012-06-01 12:04:21.000000000 +0000
++++ toolkit/system/unixproxy/nsUnixSystemProxySettings.cpp.oden	2012-06-08 07:56:35.000000000 +0000
+@@ -86,7 +86,13 @@ nsUnixSystemProxySettings::Init()
+     mGSettings->GetCollectionForSchema(NS_LITERAL_CSTRING("org.gnome.system.proxy"),
+                                        getter_AddRefs(mProxySettings));
+   }
+-
++  // If this is a GNOME session, load gconf and try to use its preferences.
++  // If gconf is not available (which would be stupid) we'll proceed as if
++  // this was not a GNOME session, using *_PROXY environment variables.
++  const char* sessionType = PR_GetEnv("DESKTOP_SESSION");
++  if (sessionType && !strcmp(sessionType, "gnome")) {
++    mGConf = do_GetService(NS_GCONFSERVICE_CONTRACTID);
++  }
+   return NS_OK;
+ }
+ 
