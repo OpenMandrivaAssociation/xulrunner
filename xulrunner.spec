@@ -8,18 +8,10 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 15.0
-%define version_internal 15.0
+%define ffver 16.0.2
+%define version_internal 16.0
 
-# (tpg) define release here
-%if %mandriva_branch == Cooker
-# Cooker
 %define release 1
-%else
-# Old distros
-%define subrel 1
-%define release %mkrel 0
-%endif
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -55,6 +47,8 @@ Patch2:		xulrunner-1.9.0.1-version.patch
 Patch3:		xulrunner-2.0-pkgconfig.patch
 Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
 Patch8:		firefox-13-fix-cairo-build.patch
+Patch9:		iceape-2.12-system-virtualenv.patch
+Patch10:	xulrunner-15.0.1.xargs.patch
 BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
@@ -99,9 +93,10 @@ BuildRequires:	cairo-devel >= 1.10
 %endif
 BuildRequires:	yasm >= 1.0.1
 BuildRequires:	libproxy-devel >= 0.4.4
+BuildRequires:	python-distribute
+BuildRequires:	python-virtualenv
 Requires:	%{libname} = %{version}-%{release}
 Conflicts:	xulrunner < %{version}
-BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 
 %description
 XULRunner is a Mozilla runtime package that can be used to
@@ -157,6 +152,8 @@ perl -pi -e "s|vpx >= 1.0.0|vpx >= 0.9.7|g" configure*
 %endif
 
 %patch8 -p1
+%patch9 -p2 -b .system-python-virtualenv
+%patch10 -p2 -b .xargs
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
@@ -361,9 +358,6 @@ cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
 %%xulrunner_mozappdir        %{mozappdir}
 FIN
 
-%clean
-rm -rf %{buildroot}
-
 %files
 %defattr(-,root,root)
 %doc LICENSE README.txt
@@ -392,7 +386,6 @@ rm -rf %{buildroot}
 #%{mozappdir}/run-mozilla.sh
 %{mozappdir}/greprefs.js
 %{mozappdir}/xulrunner
-%{mozappdir}/xulrunner-bin
 %{mozappdir}/xulrunner-stub
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
@@ -401,7 +394,7 @@ rm -rf %{buildroot}
 
 %files -n %{develname}
 %defattr(-,root,root)
-%{_includedir}/%{name}-%{version_internal}
+%{_includedir}/%{name}-%{ffver}
 #%{mozappdir}/xpcshell
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
