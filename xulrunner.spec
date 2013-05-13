@@ -53,22 +53,22 @@ BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 %if %mdkversion > 201100
-BuildRequires:	libpng-devel >= 1.4.8
+BuildRequires:	pkgconfig(libpng) >= 1.4.8
 %endif
 %if %_use_syshunspell
 BuildRequires:	hunspell-devel
 %endif
-BuildRequires:	libvpx-devel >= 0.9.7
-BuildRequires:	libIDL2-devel
+BuildRequires:	pkgconfig(vpx) >= 0.9.7
+BuildRequires:	pkgconfig(libIDL-2.0)
 BuildRequires:	gtk+2-devel
-BuildRequires:	libxt-devel
+BuildRequires:	pkgconfig(xt)
 BuildRequires:	startup-notification-devel >= 0.8
 BuildRequires:	dbus-glib-devel
-BuildRequires:	libevent-devel >= 1.4.7
+BuildRequires:	pkgconfig(libevent) >= 1.4.7
 BuildRequires:	sqlite3-devel >= 3.7.7.1
 BuildRequires:	gnome-vfs2-devel
-BuildRequires:	libgnome2-devel
-BuildRequires:	libgnomeui2-devel
+BuildRequires:	pkgconfig(libgnome-2.0)
+BuildRequires:	pkgconfig(libgnomeui-2.0)
 BuildRequires:	java-rpmbuild
 BuildRequires:	unzip
 BuildRequires:	zip
@@ -86,13 +86,13 @@ BuildRequires:  nss-devel >= 2:3.13.3
 BuildRequires:  nss-static-devel >= 2:3.13.3
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
-BuildRequires:	libnotify-devel
+BuildRequires:	pkgconfig(libnotify)
 BuildRequires:	mesagl-devel
 %if %mdkversion >= 201100
 BuildRequires:	cairo-devel >= 1.10
 %endif
 BuildRequires:	yasm >= 1.0.1
-BuildRequires:	libproxy-devel >= 0.4.4
+BuildRequires:	pkgconfig(libproxy-1.0) >= 0.4.4
 BuildRequires:	python-distribute
 BuildRequires:	python-virtualenv
 Requires:	%{libname} = %{version}-%{release}
