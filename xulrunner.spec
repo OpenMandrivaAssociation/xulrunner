@@ -60,7 +60,7 @@ BuildRequires:	hunspell-devel
 %endif
 BuildRequires:	pkgconfig(vpx) >= 0.9.7
 BuildRequires:	pkgconfig(libIDL-2.0)
-BuildRequires:	gtk+2-devel
+BuildRequires:	pkgconfig(gtk+-2.0)
 BuildRequires:	pkgconfig(xt)
 BuildRequires:	startup-notification-devel >= 0.8
 BuildRequires:	dbus-glib-devel
