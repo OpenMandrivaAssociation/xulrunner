@@ -11,7 +11,7 @@
 %define ffver 16.0.2
 %define version_internal 16.0
 
-%define release  2
+%define release  3
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
