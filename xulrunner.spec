@@ -87,7 +87,7 @@ BuildRequires:  nss-static-devel >= 2:3.13.3
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	pkgconfig(libnotify)
-BuildRequires:	mesagl-devel
+BuildRequires:	pkgconfig(gl)
 %if %mdkversion >= 201100
 BuildRequires:	cairo-devel >= 1.10
 %endif
