@@ -8,10 +8,10 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 16.0.2
-%define version_internal 16.0
+%define ffver 27.0
+%define version_internal 27.0
 
-%define release  6
+%define release  1
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -41,20 +41,31 @@ License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
 Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
-Patch0:		mozilla-nongnome-proxies.patch
-Patch1:		xulrunner-9.0-pluginsdir2.patch
-Patch2:		xulrunner-1.9.0.1-version.patch
-Patch3:		xulrunner-2.0-pkgconfig.patch
-Patch4:		xulrunner-1.9.2-public-opearator-delete.patch
-Patch8:		firefox-13-fix-cairo-build.patch
-Patch9:		iceape-2.12-system-virtualenv.patch
-Patch10:	xulrunner-15.0.1.xargs.patch
+# build patches
+Patch1:         xulrunner-install-dir.patch
+Patch2:         mozilla-build.patch
+Patch3:         mozilla-build-arm.patch
+Patch14:        xulrunner-2.0-chromium-types.patch
+Patch17:        xulrunner-24.0-gcc47.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=814879#c3
+Patch18:        xulrunner-24.0-jemalloc-ppc.patch
+# workaround linking issue on s390 (JSContext::updateMallocCounter(size_t) not found)
+Patch19:        xulrunner-24.0-s390-inlines.patch
+Patch20:        mozilla-885002.patch
+
+# Fedora specific patches
+Patch200:        mozilla-193-pkgconfig.patch
+# Unable to install addons from https pages
+Patch204:        rhbz-966424.patch
+
+# Upstream patches
+Patch300:        mozilla-837563.patch
+Patch301:        mozilla-938730.patch
+
 BuildRequires:	autoconf2.1
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
-%if %mdkversion > 201100
 BuildRequires:	pkgconfig(libpng) >= 1.4.8
-%endif
 %if %_use_syshunspell
 BuildRequires:	hunspell-devel
 %endif
@@ -76,9 +87,7 @@ BuildRequires:	doxygen
 BuildRequires:	makedepend
 BuildRequires:	valgrind
 BuildRequires:	libiw-devel
-%if %mdkversion >= 201100
 BuildRequires:	valgrind-devel
-%endif
 BuildRequires:	rootcerts
 BuildRequires:	python
 BuildRequires:  nspr-devel >= 2:4.9.0
@@ -87,10 +96,8 @@ BuildRequires:  nss-static-devel >= 2:3.13.3
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	pkgconfig(libnotify)
-BuildRequires:	mesagl-devel
-%if %mdkversion >= 201100
+BuildRequires:	pkgconfig(osmesa)
 BuildRequires:	cairo-devel >= 1.10
-%endif
 BuildRequires:	yasm >= 1.0.1
 BuildRequires:	pkgconfig(libproxy-1.0) >= 0.4.4
 BuildRequires:	python-distribute
@@ -139,21 +146,21 @@ Development files and headers for %{name}.
 %prep
 
 %setup -qn mozilla-release
-%patch0 -p0 -b .nongnome-proxies
-%patch1 -p1 -b .pluginsdir2
-%patch2 -p1 -b .version
-%patch3 -p1 -b .pkgconfig
-%patch4 -p1 -b .public-opearator-delete
+%patch1  -p1
+%patch2  -p2 -b .bld
+%patch3  -p2 -b .arm
+%patch14 -p2 -b .chromium-types
+%patch17 -p1 -b .gcc47
+%patch18 -p2 -b .jemalloc-ppc
+%patch19 -p2 -b .s390-inlines
+%patch20 -p1 -b .885002
 
-%if %mdkversion < 201200
-# the bundled libvpx is 0.9.2 + mozilla patches. this is fixed in 0.9.7
-perl -pi -e "s|VPX_CODEC_USE_INPUT_FRAGMENTS|VPX_CODEC_USE_INPUT_PARTITION|g" configure*
-perl -pi -e "s|vpx >= 1.0.0|vpx >= 0.9.7|g" configure*
-%endif
+%patch200 -p2 -b .pk
+%patch204 -p1 -b .966424
 
-%patch8 -p1
-%patch9 -p2 -b .system-python-virtualenv
-%patch10 -p2 -b .xargs
+%patch300 -p1 -b .837563
+%patch301 -p1 -b .938730
+
 
 #(tpg) correct the xulrunner version
 sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
@@ -182,20 +189,24 @@ ac_add_options --with-system-jpeg
 ac_add_options --with-system-zlib
 ac_add_options --with-system-libevent
 ac_add_options --with-system-libvpx
-%if %mdkversion >= 201101
 ac_add_options --with-system-png
-%else
-ac_add_options --disable-system-png
-%endif
 ac_add_options --with-system-bz2
 ac_add_options --enable-system-sqlite
-%if %mdkversion >= 201100
 ac_add_options --enable-system-cairo
-%else
-ac_add_options --disable-system-cairo
-%endif
 %if %_use_syshunspell
 ac_add_options --enable-system-hunspell
+%endif
+%ifarch armv7hl
+echo ac_add_options --with-arch=armv7-a
+echo ac_add_options --with-float-abi=hard
+echo ac_add_options --with-fpu=vfpv3-d16
+echo ac_add_options --disable-elf-hack
+%endif
+%ifarch armv7l
+ac_add_options --with-arch=armv7-a
+ac_add_options --with-float-abi=soft
+ac_add_options --with-fpu=vfpv3-d16
+ac_add_options --disable-elf-hack
 %endif
 ac_add_options --disable-javaxpcom
 ac_add_options --enable-pango
@@ -222,12 +233,8 @@ ac_add_options --enable-places
 ac_add_options --enable-storage
 ac_add_options --enable-safe-browsing
 ac_add_options --enable-url-classifier
-%if %mdkversion >= 201100
 ac_add_options --enable-gio
 ac_add_options --disable-gnomevfs
-%else
-ac_add_options --enable-gnomevfs
-%endif
 ac_add_options --enable-gnomeui
 ac_add_options --disable-faststart
 ac_add_options --enable-smil
@@ -246,7 +253,7 @@ ac_add_options --enable-xpcom-fastload
 ac_add_options --enable-dbus
 ac_add_options --enable-libproxy
 ac_add_options --enable-chrome-format=jar
-ac_add_options --with-distribution-id=com.mandriva
+ac_add_options --with-distribution-id=org.openmandriva
 ac_add_options --disable-cpp-exceptions
 EOF
 
@@ -276,8 +283,6 @@ make -f client.mk clean
 make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1" MOZ_PKG_FATAL_WARNINGS=0
 
 %install
-rm -rf %{buildroot}
-
 %makeinstall_std -C objdir STRIP=/bin/true MOZ_PKG_FATAL_WARNINGS=0
 
 rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
@@ -294,8 +299,8 @@ popd
          %{buildroot}/%{_libdir}/pkgconfig/libxul-embedding-unstable.pc
 
 # Don't install these in appdir
-rm  %{buildroot}%{mozappdir}/LICENSE
-rm  %{buildroot}%{mozappdir}/README.xulrunner
+rm -f  %{buildroot}%{mozappdir}/LICENSE
+rm -f  %{buildroot}%{mozappdir}/README.xulrunner
 
 %if %_use_syshunspell
 # Use the system hunspell dictionaries
@@ -359,13 +364,11 @@ cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
 FIN
 
 %files
-%defattr(-,root,root)
 %doc LICENSE README.txt
 %dir %{mozappdir}
 %{_bindir}/xulrunner
 
 %files -n %{libname}
-%defattr(-,root,root)
 %dir %{mozappdir}
 %{mozappdir}/chrome
 %{mozappdir}/dictionaries
@@ -393,9 +396,7 @@ FIN
 %{mozappdir}/hyphenation
 
 %files -n %{develname}
-%defattr(-,root,root)
 %{_includedir}/%{name}-%{ffver}
-#%{mozappdir}/xpcshell
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
