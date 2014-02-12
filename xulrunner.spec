@@ -80,7 +80,9 @@ BuildRequires:	sqlite3-devel >= 3.7.7.1
 BuildRequires:	gnome-vfs2-devel
 BuildRequires:	pkgconfig(libgnome-2.0)
 BuildRequires:	pkgconfig(libgnomeui-2.0)
+BuildRequires:	pkgconfig(libpulse)
 BuildRequires:	java-rpmbuild
+BuildRequires:	java-devel-openjdk
 BuildRequires:	unzip
 BuildRequires:	zip
 BuildRequires:	doxygen
@@ -154,16 +156,10 @@ Development files and headers for %{name}.
 %patch18 -p2 -b .jemalloc-ppc
 %patch19 -p2 -b .s390-inlines
 %patch20 -p1 -b .885002
-
 %patch200 -p2 -b .pk
 %patch204 -p1 -b .966424
-
 %patch300 -p1 -b .837563
 %patch301 -p1 -b .938730
-
-
-#(tpg) correct the xulrunner version
-sed -i -e 's#INTERNAL_VERSION#%{version_internal}#g' xulrunner/installer/Makefile.in
 
 %build
 # (gmoro) please dont enable all options by hand
@@ -252,8 +248,11 @@ ac_add_options --enable-ogg
 ac_add_options --enable-xpcom-fastload
 ac_add_options --enable-dbus
 ac_add_options --enable-libproxy
-ac_add_options --enable-chrome-format=jar
+ac_add_options --enable-chrome-format=omni
 ac_add_options --with-distribution-id=org.openmandriva
+ac_add_options --enable-pulseaudio
+ac_add_options --enable-xinerama
+ac_add_options --disable-gstreamer
 ac_add_options --disable-cpp-exceptions
 EOF
 
@@ -274,13 +273,13 @@ MOZ_SMP_FLAGS=-j1
 %ifarch %{ix86} x86_64 %arm
 [ -z "$RPM_BUILD_NCPUS" ] && \
      RPM_BUILD_NCPUS="`/usr/bin/getconf _NPROCESSORS_ONLN`"
-[ "$RPM_BUILD_NCPUS" -ge 2 ] && MOZ_SMP_FLAGS=-j2
 [ "$RPM_BUILD_NCPUS" -ge 4 ] && MOZ_SMP_FLAGS=-j4
+[ "$RPM_BUILD_NCPUS" -ge 8 ] && MOZ_SMP_FLAGS=-j8
+[ "$RPM_BUILD_NCPUS" -ge 16 ] && MOZ_SMP_FLAGS=-j16
 %endif
 
 export LDFLAGS="%{ldflags}"
-make -f client.mk clean
-make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1" MOZ_PKG_FATAL_WARNINGS=0
+make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
 
 %install
 %makeinstall_std -C objdir STRIP=/bin/true MOZ_PKG_FATAL_WARNINGS=0
