@@ -195,10 +195,10 @@ ac_add_options --enable-system-cairo
 ac_add_options --enable-system-hunspell
 %endif
 %ifarch armv7hl
-echo ac_add_options --with-arch=armv7-a
-echo ac_add_options --with-float-abi=hard
-echo ac_add_options --with-fpu=vfpv3-d16
-echo ac_add_options --disable-elf-hack
+ac_add_options --with-arch=armv7-a
+ac_add_options --with-float-abi=hard
+ac_add_options --with-fpu=vfpv3-d16
+ac_add_options --disable-elf-hack
 %endif
 %ifarch armv7l
 ac_add_options --with-arch=armv7-a
