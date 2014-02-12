@@ -22,7 +22,7 @@
 %define sname firefox
 
 # (tpg) various directory defines
-%define mozappdir %{_libdir}/%{name}-%{version_internal}
+%define mozappdir %{_libdir}/%{name}
 
 %define nss_libname %mklibname nss 3
 %define nspr_libname %mklibname nspr 4
@@ -41,6 +41,7 @@ License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
 Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
+Source1:	xulrunner-omv-default-prefs.js
 # build patches
 Patch1:         xulrunner-install-dir.patch
 Patch2:         mozilla-build.patch
@@ -282,12 +283,16 @@ export LDFLAGS="%{ldflags}"
 make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
 
 %install
+# set up our prefs before install, so it gets pulled in to omni.jar
+%{__cp} -p %{SOURCE1} objdir/dist/bin/defaults/pref/vendor.js
+
 %makeinstall_std -C objdir STRIP=/bin/true MOZ_PKG_FATAL_WARNINGS=0
 
-rm -rf %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/*.so
-pushd %{buildroot}%{mozappdir}
+# Link libraries in sdk directory instead of copying them:
+pushd $RPM_BUILD_ROOT%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/
 for i in *.so; do
-    ln -s %{mozappdir}/$i %{buildroot}%{_libdir}/%{name}-devel-%{version_internal}/sdk/lib/$i
+     rm $i
+     ln -s %{mozappdir}/$i $i
 done
 popd
 
@@ -312,47 +317,6 @@ mkdir -p %{buildroot}%{mozappdir}/components
 touch %{buildroot}%{mozappdir}/components/compreg.dat
 touch %{buildroot}%{mozappdir}/components/xpti.dat
 
-# set up our default preferences
-cat << EOF > %{buildroot}%{mozappdir}/defaults/pref/vendor.js
-pref("general.useragent.vendor", "%{distribution}");
-pref("general.useragent.vendorSub", "%{version}-%{release}");
-pref("general.useragent.vendorComment", "%{mandriva_release}");
-pref("general.smoothScroll", true);
-pref("mousewheel.horizscroll.withnokey.action", 0);
-pref("mousewheel.horizscroll.withnokey.numlines", 3);
-pref("mousewheel.horizscroll.withnokey.sysnumlines", false);
-pref("mousewheel.withnokey.action", 0);
-pref("mousewheel.withnokey.numlines", 7);
-pref("mousewheel.withnokey.sysnumlines", false);
-pref("network.protocol-handler.app.mailto", "/usr/bin/xdg-email");
-pref("network.protocol-handler.app.mms", "/usr/bin/xdg-open");
-pref("network.http.pipelining", true);
-pref("network.http.proxy.pipelining", true);
-pref("network.http.pipelining.maxrequests", 8);
-pref("browser.display.use_system_colors", true);
-pref("browser.tabs.loadDivertedInBackground", true);
-pref("browser.startup.homepage_override.mstone", "ignore");
-pref("browser.backspace_action", 2);
-pref("browser.tabs.loadFolderAndReplace", false);
-pref("browser.EULA.override", true);
-pref("browser.safebrowsing.enabled", true);
-pref("browser.shell.checkDefaultBrowser", false);
-pref("browser.startup.homepage", "file:///usr/share/doc/HTML/index.html");
-pref("browser.ctrlTab.previews", true);
-pref("browser.tabs.insertRelatedAfterCurrent", false);
-pref("print.print_edge_top", 14); // 1/100 of an inch
-pref("print.print_edge_left", 16); // 1/100 of an inch
-pref("print.print_edge_right", 16); // 1/100 of an inch
-pref("print.print_edge_bottom", 14); // 1/100 of an inch
-pref("app.update.enabled", false);
-pref("app.update.auto", false);
-pref("app.update.autoInstallEnabled", false);
-pref("intl.locale.matchOS", true);
-pref("toolkit.storage.synchronous", 0);
-pref("layout.css.visited_links_enabled", false);
-pref("security.ssl.require_safe_negotiation", false);
-EOF
-
 mkdir -p %{buildroot}%{_sys_macros_dir}
 cat <<FIN >%{buildroot}%{_sys_macros_dir}/%{name}.macros
 # Macros from %{name} package
@@ -375,28 +339,21 @@ FIN
 %ghost %{mozappdir}/components/compreg.dat
 %ghost %{mozappdir}/components/xpti.dat
 %{mozappdir}/components/*.so
-%{mozappdir}/components/*.xpt
 %{mozappdir}/components/*.manifest
 %{mozappdir}/*.manifest
-%attr(644, root, root) %{mozappdir}/components/*.js
-%{mozappdir}/defaults
-%{mozappdir}/modules
-%{mozappdir}/plugins
-%{mozappdir}/res
+%{mozappdir}/omni.ja
 %{mozappdir}/*.so
 %{mozappdir}/mozilla-xremote-client
-#%{mozappdir}/run-mozilla.sh
-%{mozappdir}/greprefs.js
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-stub
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
 %{mozappdir}/plugin-container
-%{mozappdir}/hyphenation
 
 %files -n %{develname}
 %{_includedir}/%{name}-%{ffver}
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
+%{mozappdir}/js-gdb.py
 %{_sys_macros_dir}/%{name}.macros
