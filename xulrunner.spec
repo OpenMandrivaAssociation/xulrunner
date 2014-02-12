@@ -42,6 +42,7 @@ Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
 Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
 Source1:	xulrunner-omv-default-prefs.js
+Source2:	xulrunner.rpmlintrc
 # build patches
 Patch1:         xulrunner-install-dir.patch
 Patch2:         mozilla-build.patch
