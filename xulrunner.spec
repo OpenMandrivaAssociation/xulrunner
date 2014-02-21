@@ -8,10 +8,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 27.0
-%define version_internal 27.0
-
-%define release  1
+%define ffver 27.0.1
+%define version_internal 27.0.1
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -36,7 +34,7 @@
 Summary:	XUL Runtime for Gecko Applications
 Name:		xulrunner
 Version:	%{version_internal}
-Release:	%{release}
+Release:	1
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
