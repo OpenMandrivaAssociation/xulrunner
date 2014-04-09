@@ -51,7 +51,7 @@ Patch17:        xulrunner-24.0-gcc47.patch
 Patch18:        xulrunner-24.0-jemalloc-ppc.patch
 # workaround linking issue on s390 (JSContext::updateMallocCounter(size_t) not found)
 Patch19:        xulrunner-24.0-s390-inlines.patch
-Patch20:        mozilla-885002.patch
+Patch20:	firefox-28.0-nss_detect.patch
 
 # Fedora specific patches
 Patch200:        mozilla-193-pkgconfig.patch
@@ -149,17 +149,17 @@ Development files and headers for %{name}.
 
 %setup -qn mozilla-release
 %patch1  -p1
-%patch2  -p2 -b .bld
+#patch2  -p2 -b .bld
 %patch3  -p2 -b .arm
 %patch14 -p2 -b .chromium-types
 %patch17 -p1 -b .gcc47
 %patch18 -p2 -b .jemalloc-ppc
 %patch19 -p2 -b .s390-inlines
-%patch20 -p1 -b .885002
+%patch20 -p1 -b .nss_detect
 %patch200 -p2 -b .pk
 %patch204 -p1 -b .966424
-%patch300 -p1 -b .837563
-%patch301 -p1 -b .938730
+#patch300 -p1 -b .837563
+#patch301 -p1 -b .938730
 
 %build
 # (gmoro) please dont enable all options by hand
