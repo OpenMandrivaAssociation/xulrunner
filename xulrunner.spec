@@ -16,7 +16,7 @@
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
 %define major %{version_internal}
-%define libname %mklibname %{name} %{major}
+%define libname %mklibname %{name} 
 %define develname %mklibname %{name} -d
 %define develunstname %mklibname %{name}-unstable -d
 %define sname firefox
@@ -36,7 +36,7 @@
 Summary:	XUL Runtime for Gecko Applications
 Name:		xulrunner
 Version:	%{version_internal}
-Release:	4
+Release:	5
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
@@ -115,6 +115,8 @@ Summary:        Dynamic libraries for %{name}
 Group:          System/Libraries
 Conflicts:	xulrunner < %{version}
 Obsoletes:	%{mklibname xulrunner 1.9.2} < %{version}-%{release}
+Obsoletes:	%{mklibname xulrunner 28.0}
+Obsoletes:	%{mklibname xulrunner 33.0}
 Requires:	rootcerts
 # (tpg) manually pull dependancies on libnss3 and libnspr4, why ? see above
 Requires:	%{nss_libname} >= 2:%{nss_version}
