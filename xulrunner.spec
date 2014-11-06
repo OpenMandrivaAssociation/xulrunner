@@ -1,3 +1,5 @@
+%define _disable_ld_no_undefined 1
+
 #
 # WARNING, READ FIRST:
 #
@@ -8,8 +10,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 28.0
-%define version_internal 28.0
+%define ffver 33.0
+%define version_internal 33.0
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -45,7 +47,6 @@ Source2:	xulrunner.rpmlintrc
 Patch1:         xulrunner-install-dir.patch
 Patch2:         mozilla-build.patch
 Patch3:         mozilla-build-arm.patch
-Patch14:        xulrunner-2.0-chromium-types.patch
 Patch17:        xulrunner-24.0-gcc47.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=814879#c3
 Patch18:        xulrunner-24.0-jemalloc-ppc.patch
@@ -59,10 +60,8 @@ Patch200:        mozilla-193-pkgconfig.patch
 Patch204:        rhbz-966424.patch
 
 # Upstream patches
-Patch300:        mozilla-837563.patch
-Patch301:        mozilla-938730.patch
 
-BuildRequires:	autoconf2.1
+BuildRequires:	autoconf
 BuildRequires:	zlib-devel
 BuildRequires:	bzip2-devel
 BuildRequires:	pkgconfig(libpng) >= 1.4.8
@@ -77,9 +76,6 @@ BuildRequires:	startup-notification-devel >= 0.8
 BuildRequires:	dbus-glib-devel
 BuildRequires:	pkgconfig(libevent) >= 1.4.7
 BuildRequires:	sqlite3-devel >= 3.7.7.1
-BuildRequires:	gnome-vfs2-devel
-BuildRequires:	pkgconfig(libgnome-2.0)
-BuildRequires:	pkgconfig(libgnomeui-2.0)
 BuildRequires:	pkgconfig(libpulse)
 BuildRequires:	java-rpmbuild
 BuildRequires:	java-devel-openjdk
@@ -98,7 +94,6 @@ BuildRequires:  nss-static-devel >= 2:3.13.3
 BuildRequires:	pango-devel
 BuildRequires:	libalsa-devel
 BuildRequires:	pkgconfig(libnotify)
-BuildRequires:	pkgconfig(osmesa)
 BuildRequires:	cairo-devel >= 1.10
 BuildRequires:	yasm >= 1.0.1
 BuildRequires:	pkgconfig(libproxy-1.0) >= 0.4.4
@@ -151,15 +146,12 @@ Development files and headers for %{name}.
 %patch1  -p1
 #patch2  -p2 -b .bld
 %patch3  -p2 -b .arm
-%patch14 -p2 -b .chromium-types
 %patch17 -p1 -b .gcc47
 %patch18 -p2 -b .jemalloc-ppc
 %patch19 -p2 -b .s390-inlines
 %patch20 -p1 -b .nss_detect
 %patch200 -p2 -b .pk
-%patch204 -p1 -b .966424
-#patch300 -p1 -b .837563
-#patch301 -p1 -b .938730
+%patch204 -p2 -b .966424
 
 %build
 # (gmoro) please dont enable all options by hand
@@ -220,7 +212,6 @@ ac_add_options --disable-strip
 ac_add_options --enable-install-strip
 ac_add_options --enable-startup-notification
 ac_add_options --enable-default-toolkit=cairo-gtk2
-ac_add_options --enable-shared-js
 ac_add_options --with-java-include-path=%{java_home}/include
 ac_add_options --with-java-bin-path=%{java_home}/bin
 ac_add_options --enable-image-encoder=all
@@ -231,7 +222,7 @@ ac_add_options --enable-safe-browsing
 ac_add_options --enable-url-classifier
 ac_add_options --enable-gio
 ac_add_options --disable-gnomevfs
-ac_add_options --enable-gnomeui
+ac_add_options --disable-gnomeui
 ac_add_options --disable-faststart
 ac_add_options --enable-smil
 ac_add_options --disable-tree-freetype
@@ -256,6 +247,9 @@ ac_add_options --disable-gstreamer
 ac_add_options --disable-cpp-exceptions
 EOF
 
+export CXX=g++
+export CC=gcc
+
 # Mozilla builds with -Wall with exception of a few warnings which show up
 # everywhere in the code; so, don't override that.
 #
@@ -279,7 +273,7 @@ MOZ_SMP_FLAGS=-j1
 %endif
 
 export LDFLAGS="%{ldflags}"
-make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS -g0" MOZ_SERVICES_SYNC="1"
+make -f client.mk build STRIP="/bin/true" MOZ_MAKE_FLAGS="$MOZ_SMP_FLAGS" MOZ_SERVICES_SYNC="1"
 
 %install
 # set up our prefs before install, so it gets pulled in to omni.jar
@@ -348,6 +342,9 @@ FIN
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
 %{mozappdir}/plugin-container
+%ifarch %{ix86} x86_64
+%{mozappdir}/gmp-fake
+%endif
 
 %files -n %{develname}
 %{_includedir}/%{name}-%{ffver}
