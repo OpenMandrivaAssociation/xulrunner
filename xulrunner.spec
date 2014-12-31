@@ -77,7 +77,6 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	pkgconfig(libevent) >= 1.4.7
 BuildRequires:	sqlite3-devel >= 3.7.7.1
 BuildRequires:	pkgconfig(libpulse)
-BuildRequires:	java-rpmbuild
 BuildRequires:	java-devel-openjdk
 BuildRequires:	unzip
 BuildRequires:	zip
