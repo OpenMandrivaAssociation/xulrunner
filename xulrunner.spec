@@ -251,6 +251,9 @@ ac_add_options --enable-pulseaudio
 ac_add_options --enable-xinerama
 ac_add_options --disable-gstreamer
 ac_add_options --disable-cpp-exceptions
+%ifarch %arm
+ac_add_options --disable-webrtc
+%endif
 EOF
 
 export CXX=g++
