@@ -146,8 +146,8 @@ Development files and headers for %{name}.
 %setup -qn mozilla-release
 
 # fix use of deprecated macro in vpx code
-sed -i 's/IMG_FMT_I420/VPX_IMG_FMT_I420/' mozilla/media/webrtc/trunk/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
-sed -i 's/\[PLANE_/[VPX_PLANE_/' mozilla/media/webrtc/trunk/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
+sed -i 's/IMG_FMT_I420/VPX_IMG_FMT_I420/' media/webrtc/trunk/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
+sed -i 's/\[PLANE_/[VPX_PLANE_/' media/webrtc/trunk/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
 
 %patch1  -p1
 #patch2  -p2 -b .bld
