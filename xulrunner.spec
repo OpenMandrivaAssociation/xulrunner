@@ -1,4 +1,6 @@
 %define _disable_ld_no_undefined 1
+%define _disable_lto 1
+%define _disable_rebuild_configure 1
 
 #
 # WARNING, READ FIRST:
@@ -10,8 +12,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 33.0
-%define version_internal 33.0
+%define ffver 38.5.2
+%define version_internal 38.5.2
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -40,26 +42,22 @@ Release:	9
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	ftp://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
+Source0:	http://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}esr.source.tar.bz2
 Source1:	xulrunner-omv-default-prefs.js
 Source2:	xulrunner.rpmlintrc
 # build patches
 Patch1:         xulrunner-install-dir.patch
 Patch2:         mozilla-build.patch
 Patch3:         mozilla-build-arm.patch
-Patch17:        xulrunner-24.0-gcc47.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=814879#c3
 Patch18:        xulrunner-24.0-jemalloc-ppc.patch
 # workaround linking issue on s390 (JSContext::updateMallocCounter(size_t) not found)
 Patch19:        xulrunner-24.0-s390-inlines.patch
-Patch20:	firefox-28.0-nss_detect.patch
 
 # Fedora specific patches
 Patch200:        mozilla-193-pkgconfig.patch
 # Unable to install addons from https pages
 Patch204:        rhbz-966424.patch
-
-# Upstream patches
 
 BuildRequires:	autoconf
 BuildRequires:	zlib-devel
@@ -143,19 +141,13 @@ Development files and headers for %{name}.
 
 %prep
 
-%setup -qn mozilla-release
-
-# fix use of deprecated macro in vpx code
-sed -i 's/IMG_FMT_I420/VPX_IMG_FMT_I420/' media/webrtc/trunk/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
-sed -i 's/\[PLANE_/[VPX_PLANE_/' media/webrtc/trunk/webrtc/modules/video_coding/codecs/vp8/vp8_impl.cc
+%setup -qn mozilla-esr38
 
 %patch1  -p1
 #patch2  -p2 -b .bld
 %patch3  -p2 -b .arm
-%patch17 -p1 -b .gcc47
 %patch18 -p2 -b .jemalloc-ppc
 %patch19 -p2 -b .s390-inlines
-%patch20 -p1 -b .nss_detect
 %patch200 -p2 -b .pk
 %patch204 -p2 -b .966424
 
@@ -345,14 +337,14 @@ FIN
 %{mozappdir}/*.manifest
 %{mozappdir}/omni.ja
 %{mozappdir}/*.so
-%{mozappdir}/mozilla-xremote-client
 %{mozappdir}/xulrunner
 %{mozappdir}/xulrunner-stub
 %{mozappdir}/platform.ini
 %{mozappdir}/dependentlibs.list
 %{mozappdir}/plugin-container
+%{mozappdir}/gmp-clearkey
 %ifarch %{ix86} x86_64
-%{mozappdir}/gmp-fake
+%{mozappdir}/gmp-fake*
 %endif
 
 %files -n %{develname}
