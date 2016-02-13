@@ -12,8 +12,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 38.5.2
-%define version_internal 38.5.2
+%define ffver 38.6.1esr
+%define version_internal 38.6.1
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -42,7 +42,7 @@ Release:	10
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	http://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}esr.source.tar.bz2
+Source0:	http://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
 Source1:	xulrunner-omv-default-prefs.js
 Source2:	xulrunner.rpmlintrc
 # build patches
@@ -348,7 +348,7 @@ FIN
 %endif
 
 %files -n %{develname}
-%{_includedir}/%{name}-%{ffver}
+%{_includedir}/%{name}-%{version_internal}
 %{_libdir}/%{name}-devel-%{version_internal}
 %{_libdir}/pkgconfig/*.pc
 %{_datadir}/idl/%{name}-%{version_internal}
