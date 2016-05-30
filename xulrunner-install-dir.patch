@@ -8,5 +8,5 @@ diff -up firefox-29.0/mozilla-release/config/baseconfig.mk.orig firefox-29.0/moz
 -installdir = $(libdir)/$(MOZ_APP_NAME)-$(MOZ_APP_VERSION)
 +installdir = $(libdir)/$(MOZ_APP_NAME)
  sdkdir = $(libdir)/$(MOZ_APP_NAME)-devel-$(MOZ_APP_VERSION)
- ifndef TOP_DIST
- TOP_DIST = dist
+ ifeq (.,$(DEPTH))
+ DIST = dist

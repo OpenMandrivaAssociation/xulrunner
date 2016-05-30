@@ -12,8 +12,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 38.6.1esr
-%define version_internal 38.6.1
+%define ffver 45.0.2esr
+%define version_internal 45.0.2
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
@@ -38,11 +38,11 @@
 Summary:	XUL Runtime for Gecko Applications
 Name:		xulrunner
 Version:	%{version_internal}
-Release:	11
+Release:	1
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
 Url:		http://developer.mozilla.org/en/docs/XULRunner
-Source0:	http://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.bz2
+Source0:	http://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.xz
 Source1:	xulrunner-omv-default-prefs.js
 Source2:	xulrunner.rpmlintrc
 # build patches
@@ -58,6 +58,7 @@ Patch19:        xulrunner-24.0-s390-inlines.patch
 Patch200:        mozilla-193-pkgconfig.patch
 # Unable to install addons from https pages
 Patch204:        rhbz-966424.patch
+Patch205:	mozilla-42.0-libproxy.patch
 
 BuildRequires:	autoconf
 BuildRequires:	zlib-devel
@@ -141,7 +142,7 @@ Development files and headers for %{name}.
 
 %prep
 
-%setup -qn mozilla-esr38
+%setup -qn firefox-%ffver
 
 %patch1  -p1
 #patch2  -p2 -b .bld
@@ -150,6 +151,8 @@ Development files and headers for %{name}.
 %patch19 -p2 -b .s390-inlines
 %patch200 -p2 -b .pk
 %patch204 -p2 -b .966424
+%patch205 -p1 -b .libproxy
+
 
 %build
 # (gmoro) please dont enable all options by hand
@@ -332,9 +335,7 @@ FIN
 %dir %{mozappdir}/components
 %ghost %{mozappdir}/components/compreg.dat
 %ghost %{mozappdir}/components/xpti.dat
-%{mozappdir}/components/*.so
-%{mozappdir}/components/*.manifest
-%{mozappdir}/*.manifest
+%{mozappdir}/rapl
 %{mozappdir}/omni.ja
 %{mozappdir}/*.so
 %{mozappdir}/xulrunner
