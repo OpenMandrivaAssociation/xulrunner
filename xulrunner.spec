@@ -223,6 +223,7 @@ ac_add_options --enable-safe-browsing
 ac_add_options --enable-url-classifier
 ac_add_options --enable-gio
 ac_add_options --disable-gnomevfs
+ac_add_options --disable-gconf
 ac_add_options --disable-gnomeui
 ac_add_options --disable-faststart
 ac_add_options --enable-smil
