@@ -12,8 +12,8 @@
 # This is a discussed topic. Please, do not flame it again.
 
 # (tpg) DO NOT FORGET TO SET EXACT XULRUNNER and FIREFOX VERSIONS !
-%define ffver 45.0.2esr
-%define version_internal 45.0.2
+%define ffver 45.6.0esr
+%define version_internal 45.6.0
 
 # (tpg) DO NOT FORGET TO SET EXACT MAJOR!
 # in this case %{major} == %{version_internal}
