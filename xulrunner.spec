@@ -41,7 +41,7 @@ Version:	%{version_internal}
 Release:	1
 License:	MPLv1.1 or GPLv2+ or LGPLv2+
 Group:		Development/Other
-Url:		http://developer.mozilla.org/en/docs/XULRunner
+Url:		https://developer.mozilla.org/en/docs/XULRunner
 Source0:	http://ftp.mozilla.org/pub/mozilla.org/%{sname}/releases/%{ffver}/source/%{sname}-%{ffver}.source.tar.xz
 Source1:	xulrunner-omv-default-prefs.js
 Source2:	xulrunner.rpmlintrc
